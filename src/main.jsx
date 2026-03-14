@@ -14,7 +14,7 @@ import Layout from "./Layout";
 import Home from "./pages/Home";
 import ContactPage from "./components/Contact/Contact";
 import ProductDetails from "./components/Products/ProductDetails";
-import CartPage from "./components/Products/Cart";
+import CartPage from "./components/Products/cart";
 import SuccessPage from "./components/Products/PurchaseSuccess";
 import WomensCollection from "./pages/Women/WomensCollection";
 import MensCollection from "./pages/Men/MensCollection";
