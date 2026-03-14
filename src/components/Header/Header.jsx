@@ -64,77 +64,83 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-black text-white border-b border-white/10 font-sans">
+    <nav className="sticky top-0 z-50 w-full bg-white text-gray-900 border-b border-gray-200 font-sans shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           
-          {/* --- LOGO --- */}
-          <div className="flex-shrink-0 flex items-center gap-2 z-50">
+          {/* --- UPGRADED LOGO SECTION --- */}
+          <a href="/" className="flex-shrink-0 flex items-center gap-3 z-50 group">
              <img 
-               src="/Img/Mo_Graphics_Logo_White.png" 
-               alt="Logo" 
-               className="h-16 w-auto object-contain" 
+               src="https://jivan.website/jivan.png" 
+               alt="House of Mahalaxmi Logo" 
+               className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
              />
-             <span className="font-bold text-xl tracking-tight hidden">MOGRAPHICS</span>
-          </div>
+             <div className="flex flex-col justify-center">
+               <span className="text-[9px] sm:text-[10px] tracking-[0.35em] uppercase text-gray-500 font-medium leading-none mb-1 ml-0.5">
+                 House of
+               </span>
+               <span className="text-xl sm:text-2xl font-serif font-bold tracking-wide text-gray-900 leading-none">
+                 MAHALAXMI<span className="text-[#800020]">.</span>
+               </span>
+             </div>
+          </a>
 
           {/* --- DESKTOP NAVIGATION --- */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="/" className="hover:text-[#D4E821] transition-colors font-medium">Home</a>
-            <a href="/store" className="hover:text-[#D4E821] transition-colors font-medium">Store</a>
-            <a href='/works' className="hover:text-[#D4E821] transition-colors font-medium">Works</a>
+            <a href="/" className="hover:text-[#800020] transition-colors font-medium">Home</a>
+            <a href="/new-arrivals" className="hover:text-[#800020] transition-colors font-medium">New Arrivals</a>
+            <a href="/women" className="hover:text-[#800020] transition-colors font-medium">Women</a>
+            <a href="/men" className="hover:text-[#800020] transition-colors font-medium">Men</a>
         
-            
+            {/* Collections Dropdown */}
             <div 
               className="relative group h-20 flex items-center"
               onMouseEnter={() => setIsServicesOpen(true)}
               onMouseLeave={() => setIsServicesOpen(false)}
             >
-              <button className="flex items-center gap-1 hover:text-[#D4E821] transition-colors font-medium focus:outline-none">
-                Services <ChevronDown size={16} />
+              <button className="flex items-center gap-1 hover:text-[#800020] transition-colors font-medium focus:outline-none">
+                Collections <ChevronDown size={16} />
               </button>
 
-              <div className={`absolute top-full left-1/2 -translate-x-1/2 w-64 bg-[#1a1a1a] border border-white/10 rounded-lg shadow-xl p-2 transition-all duration-200 origin-top ${isServicesOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
+              <div className={`absolute top-full left-1/2 -translate-x-1/2 w-72 bg-white border border-gray-100 rounded-lg shadow-xl p-2 transition-all duration-200 origin-top ${isServicesOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
                 <div className="flex flex-col">
                   {[
-                    { title: "Social Media Plans", sub: "Monthly Graphics & Heavy", href: "/services/social" },
-                    { title: "Web Development", sub: "School & Store Sites", href: "/services/web" },
-                    { title: "Photography", sub: "Events & Weddings", href: "/services/photo" },
-                    { title: "Printing", sub: "Flex & Branding", href: "/services/print" }
+                    { title: "Festive Wear", sub: "Sarees, Lehengas & Sets", href: "/collections/festive" },
+                    { title: "Wedding Collection", sub: "Bridal & Groom Elegance", href: "/collections/wedding" },
+                    { title: "Everyday Casuals", sub: "Comfortable & Stylish", href: "/collections/casuals" },
+                    { title: "Accessories", sub: "Jewelry, Bags & Footwear", href: "/collections/accessories" }
                   ].map((item, idx) => (
-                    <a key={idx} href={item.href} className="block px-4 py-3 rounded-md hover:bg-white/5 hover:text-[#D4E821] transition-colors group/item">
+                    <a key={idx} href={item.href} className="block px-4 py-3 rounded-md hover:bg-gray-50 hover:text-[#800020] transition-colors group/item">
                       <span className="block text-sm font-semibold group-hover/item:translate-x-1 transition-transform">{item.title}</span>
-                      <span className="block text-xs text-gray-400 mt-0.5">{item.sub}</span>
+                      <span className="block text-xs text-gray-500 mt-0.5">{item.sub}</span>
                     </a>
                   ))}
                 </div>
               </div>
             </div>
-
-            {/* <a href="/contact" className="hover:text-[#D4E821] transition-colors font-medium">Contact</a> */}
           </div>
 
           {/* --- RIGHT ACTIONS --- */}
           <div className="flex items-center gap-6 z-50">
             <button 
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className={`transition-colors ${isSearchOpen ? 'text-[#D4E821]' : 'text-gray-300 hover:text-white'}`}
+              className={`transition-colors ${isSearchOpen ? 'text-[#800020]' : 'text-gray-700 hover:text-black'}`}
             >
-              {isSearchOpen ? <X size={20} /> : <Search size={20} />}
+              {isSearchOpen ? <X size={22} /> : <Search size={22} />}
             </button>
 
-            <a href="/cart" className="relative text-gray-300 hover:text-white transition-colors group">
-              <ShoppingBag size={20} />
-              <span className="absolute -top-2 -right-2 bg-[#D4E821] text-black text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">
-                0
+            <a href="/cart" className="relative text-gray-700 hover:text-black transition-colors group">
+              <ShoppingBag size={22} />
+              <span className="absolute -top-2 -right-2 bg-[#800020] text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">
+                3
               </span>
             </a>
             
-            {/* Mobile Menu Button - FIXED: Removed conditional hiding */}
+            {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center">
               <button 
                 onClick={() => setIsMobileOpen(true)}
-                className="text-gray-300 hover:text-white p-2"
+                className="text-gray-700 hover:text-black p-2"
               >
                 <Menu size={24} />
               </button>
@@ -147,31 +153,30 @@ const Navbar = () => {
       {isSearchOpen && (
         <div 
             ref={searchContainerRef}
-            className="absolute top-20 left-0 w-full bg-black/95 border-b border-white/10 p-4 shadow-2xl z-40"
+            className="absolute top-20 left-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 p-6 shadow-xl z-40"
         >
-            <div className="max-w-7xl mx-auto relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <div className="max-w-4xl mx-auto relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={24} />
                 <input 
                     ref={searchInputRef}
                     type="text" 
-                    placeholder="Search for products, services..." 
-                    className="w-full bg-[#121212] border border-white/10 rounded-full py-3 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-[#D4E821] transition-colors"
+                    placeholder="Search for sarees, dresses, kurtas..." 
+                    className="w-full bg-gray-50 border border-gray-300 rounded-full py-4 pl-14 pr-6 text-gray-900 text-lg placeholder-gray-400 focus:outline-none focus:border-[#800020] focus:ring-1 focus:ring-[#800020] transition-colors"
                 />
             </div>
         </div>
       )}
 
       {/* --- MOBILE FULL SCREEN MENU --- */}
-      {/* FIXED: Changed z-40 to z-[60] to ensure it covers the Navbar */}
       <div 
         ref={mobileMenuRef}
-        className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-xl h-[100dvh] w-full transform translate-x-full md:hidden flex flex-col"
+        className="fixed inset-0 z-[60] bg-white/95 backdrop-blur-xl h-[100dvh] w-full transform translate-x-full md:hidden flex flex-col"
         style={{ willChange: 'transform' }}
       >
-        <div className="h-20 flex items-center justify-end px-4 border-b border-white/10 bg-black/40">
+        <div className="h-20 flex items-center justify-end px-4 border-b border-gray-200 bg-white/50">
            <button 
                 onClick={() => setIsMobileOpen(false)}
-                className="p-2 text-white hover:text-[#D4E821] transition-colors"
+                className="p-2 text-gray-900 hover:text-[#800020] transition-colors"
            >
                <X size={28} />
            </button>
@@ -180,39 +185,40 @@ const Navbar = () => {
         <div className="flex-1 overflow-y-auto p-6 flex flex-col justify-center">
           <div className="space-y-6">
             <div className="space-y-4">
-              <a ref={addToRefs} href="/" className="block text-4xl font-bold text-white hover:text-[#D4E821] transition-colors">Home</a>
-              <a ref={addToRefs} href="/store" className="block text-4xl font-bold text-white hover:text-[#D4E821] transition-colors">Store</a>
-              <a ref={addToRefs} href="/contact" className="block text-4xl font-bold text-white hover:text-[#D4E821] transition-colors">Contact</a>
+              <a ref={addToRefs} href="/" className="block text-4xl font-bold text-gray-900 hover:text-[#800020] transition-colors">Home</a>
+              <a ref={addToRefs} href="/new-arrivals" className="block text-4xl font-bold text-gray-900 hover:text-[#800020] transition-colors">New Arrivals</a>
+              <a ref={addToRefs} href="/women" className="block text-4xl font-bold text-gray-900 hover:text-[#800020] transition-colors">Women</a>
+              <a ref={addToRefs} href="/men" className="block text-4xl font-bold text-gray-900 hover:text-[#800020] transition-colors">Men</a>
             </div>
 
-            <div className="border-t border-white/10 my-6 w-20"></div>
+            <div className="border-t border-gray-200 my-6 w-20"></div>
 
             <div className="space-y-3">
-               <p ref={addToRefs} className="text-[#D4E821] font-mono text-sm uppercase tracking-widest mb-4">Our Services</p>
+               <p ref={addToRefs} className="text-[#800020] font-mono text-sm uppercase tracking-widest mb-4">Shop By Collection</p>
                
                {[
-                 { name: "Social Media Plans", href: "/services/social-media" },
-                 { name: "Web Development", href: "/services/web-dev" },
-                 { name: "Photography", href: "/services/photography" },
-                 { name: "Printing & Branding", href: "/services/print" },
+                 { name: "Festive Wear", href: "/collections/festive" },
+                 { name: "Wedding Collection", href: "/collections/wedding" },
+                 { name: "Everyday Casuals", href: "/collections/casuals" },
+                 { name: "Accessories", href: "/collections/accessories" },
                ].map((service, i) => (
                   <a 
                     key={i} 
                     ref={addToRefs} 
                     href={service.href} 
-                    className="flex items-center justify-between text-xl text-gray-300 hover:text-white group py-2 border-b border-white/5"
+                    className="flex items-center justify-between text-xl text-gray-600 hover:text-gray-900 group py-2 border-b border-gray-100"
                   >
                     {service.name}
-                    <ArrowRight size={16} className="opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#D4E821]" />
+                    <ArrowRight size={16} className="opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#800020]" />
                   </a>
                ))}
             </div>
           </div>
         </div>
         
-        <div className="p-6 bg-black/40 border-t border-white/10">
-            <button className="w-full bg-[#D4E821] text-black font-bold py-4 rounded-lg hover:bg-white transition-colors">
-                Book a Consultation
+        <div className="p-6 bg-white border-t border-gray-200">
+            <button className="w-full bg-gray-900 text-white font-bold py-4 rounded-lg hover:bg-[#800020] transition-colors shadow-md">
+                View All Products
             </button>
         </div>
       </div>
