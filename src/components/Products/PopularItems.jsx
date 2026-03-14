@@ -1,201 +1,186 @@
-import React, { useState, useRef } from 'react';
-import { ShoppingCart, Heart, Star, Eye, ArrowRight, Camera, Palette, Globe, Printer, Layers } from 'lucide-react';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useState } from 'react';
+import { ShoppingBag, Star, Eye, ArrowRight, Shirt } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 
-// Register ScrollTrigger
-gsap.registerPlugin(ScrollTrigger);
-
-// --- DATA ---
+// --- CLOTHING DATA WITH IMAGES ---
 const products = [
   {
     id: 1,
-    name: 'Social Media Monthly - Heavy',
-    category: 'Graphics',
-    type: 'MONTHLY',
-    price: 89000,
-    oldPrice: 120000,
+    name: 'Banarasi Silk Saree with Zari Work',
+    category: 'Sarees',
+    price: 12500,
+    oldPrice: 15000,
     rating: 5.0,
-    reviews: 12,
-    image: 'https://images.unsplash.com/photo-1626785774573-4b799312c95d?w=800&q=80', 
-    isOnSale: true,
+    reviews: 112,
+    // Red Silk Saree
+    image: 'https://images.unsplash.com/photo-1610030469983-98e550d615e1?q=80&w=600&auto=format&fit=crop', 
+    badge: 'Bestseller',
+    tabs: ['All', 'Best Sellers', 'Trending'],
   },
   {
     id: 2,
-    name: 'Marriage Photography',
-    category: 'Photography',
-    type: 'EVENT',
-    price: 30000,
-    oldPrice: 45000,
+    name: 'Embroidered Velvet Bridal Lehenga',
+    category: 'Lehengas',
+    price: 35000,
+    oldPrice: 42000,
     rating: 4.9,
     reviews: 48,
-    image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80',
-    isOnSale: true,
+    // Bridal Lehenga
+    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop',
+    badge: 'New',
+    tabs: ['All', 'New Arrivals'],
   },
   {
     id: 3,
-    name: 'Dukan/Store Website',
-    category: 'Website',
-    type: 'DEV',
-    price: 1000,
-    oldPrice: 5000,
+    name: 'Cotton Floral Anarkali Suit',
+    category: 'Kurtas',
+    price: 3200,
+    oldPrice: null,
     rating: 4.7,
     reviews: 156,
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80',
-    isNew: true,
-    isOnSale: true,
+    // Yellow/White Anarkali Suit
+    image: 'https://images.unsplash.com/photo-1583391733958-d25e0b46410f?q=80&w=600&auto=format&fit=crop',
+    tabs: ['All', 'Trending'],
   },
   {
     id: 4,
-    name: 'School/Business ID Cards',
-    category: 'Print',
-    type: 'PER UNIT',
-    price: 15,
+    name: 'Kanjeevaram Temple Border Saree',
+    category: 'Sarees',
+    price: 18000,
+    oldPrice: 21000,
     rating: 4.8,
     reviews: 320,
-    image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=800&q=80',
+    // Traditional South Indian Saree
+    image: 'https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?q=80&w=600&auto=format&fit=crop',
+    badge: 'Sale',
+    tabs: ['All', 'Best Sellers'],
   },
   {
     id: 5,
-    name: 'Store Product Shoot',
-    category: 'Photography',
-    type: 'PER PROD',
-    price: 499,
-    oldPrice: 1000,
+    name: 'Mens Classic Silk Kurta Pajama',
+    category: 'Menswear',
+    price: 4500,
+    oldPrice: 5500,
     rating: 4.8,
-    reviews: 24,
-    image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=800&q=80',
-    isOnSale: true,
+    reviews: 84,
+    // Men's White Kurta
+    image: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=600&auto=format&fit=crop',
+    tabs: ['All', 'New Arrivals', 'Trending'],
   },
   {
     id: 6,
-    name: 'Social Media - Medium',
-    category: 'Graphics',
-    type: 'MONTHLY',
-    price: 19999,
-    oldPrice: 25000,
+    name: 'Chanderi Handloom Saree',
+    category: 'Sarees',
+    price: 6500,
+    oldPrice: null,
     rating: 4.6,
-    reviews: 18,
-    image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80',
-    isOnSale: true,
+    reviews: 45,
+    // Printed Handloom Fabric/Kurta
+    image: 'https://images.unsplash.com/photo-1583391733975-eb76fad0e867?q=80&w=600&auto=format&fit=crop',
+    tabs: ['All', 'Trending'],
   },
   {
     id: 7,
-    name: 'School/College Website',
-    category: 'Website',
-    type: 'DEV',
-    price: 5000,
-    oldPrice: 10000,
-    rating: 5.0,
-    reviews: 9,
-    image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80',
-    isOnSale: true,
+    name: 'Gold Plated Kundan Necklace Set',
+    category: 'Jewelry',
+    price: 2500,
+    oldPrice: 3500,
+    rating: 4.9,
+    reviews: 210,
+    // Bridal Jewelry Close-up
+    image: 'https://images.unsplash.com/photo-1599643478524-fb66f7f6f52e?q=80&w=600&auto=format&fit=crop',
+    badge: 'Trending',
+    tabs: ['All', 'Best Sellers', 'Trending'],
   },
   {
     id: 8,
-    name: 'FLEX Prints',
-    category: 'Print',
-    type: 'FREE SIZE',
-    price: 10,
-    oldPrice: 15,
+    name: 'Designer Georgette Gown',
+    category: 'Dresses',
+    price: 8500,
+    oldPrice: 10000,
     rating: 4.5,
-    reviews: 500,
-    image: 'https://images.unsplash.com/photo-1562654501-a0ccc0fc3fb1?w=800&q=80',
-    isOnSale: true,
+    reviews: 56,
+    // Flowing Gown/Dress
+    image: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?q=80&w=600&auto=format&fit=crop',
+    tabs: ['All', 'New Arrivals'],
   },
 ];
 
-const PopularProducts = () => {
-  const containerRef = useRef(null);
+const categories = ["All", "New Arrivals", "Best Sellers", "Trending"];
 
-  // --- GSAP ANIMATION ---
-  useGSAP(() => {
-    // 1. Animate Header Text on Load
-    gsap.from(".header-reveal", {
-      y: 30,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.1,
-      ease: "power3.out"
-    });
+export default function ProductShowcase() {
+  const [activeTab, setActiveTab] = useState("All");
 
-    // 2. Batch Animate Cards on Scroll
-    // .batch() is perfect for grids. It groups elements that enter the viewport
-    // at the same time and staggers them, but handles scrolling smoothly.
-    ScrollTrigger.batch(".product-card", {
-      onEnter: (elements) => {
-        gsap.fromTo(elements, 
-          { y: 60, opacity: 0, scale: 0.95 }, 
-          { 
-            y: 0, 
-            opacity: 1, 
-            scale: 1, 
-            duration: 0.8, 
-            stagger: 0.15, 
-            ease: "power3.out",
-            overwrite: true 
-          }
-        );
-      },
-      // Optional: Logic if you want them to fade out when scrolling up
-      // onLeave: elements => gsap.to(elements, { opacity: 0, y: -50 }),
-      // onEnterBack: elements => gsap.to(elements, { opacity: 1, y: 0, stagger: 0.1 }),
-      start: "top 90%", // Start animation when card top is 90% down the viewport
-      once: true // Animation happens only once
-    });
-
-  }, { scope: containerRef });
+  // Filter products based on the currently active tab
+  const filteredProducts = products.filter(product => 
+    product.tabs.includes(activeTab)
+  );
 
   return (
-    <section ref={containerRef} className="bg-[#050505] py-12 md:py-24 text-white border-b border-white/10 min-h-screen">
+    <section className="bg-white py-16 md:py-24 text-gray-900 font-sans">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
         
-        {/* --- HEADER --- */}
-        <div className="mb-8 md:mb-12 flex flex-col items-start md:items-end justify-between gap-4 md:flex-row border-b border-white/10 pb-6">
-          <div className="flex-1 overflow-hidden">
-            <span className="header-reveal text-[#D4E821] font-mono text-[10px] md:text-xs uppercase tracking-widest mb-2 block">
-                Service Catalog
+        {/* --- HEADER & TABS --- */}
+        <div className="mb-10 flex flex-col md:flex-row items-center md:items-end justify-between gap-6 border-b border-gray-200 pb-6 text-center md:text-left">
+          
+          {/* Titles */}
+          <div>
+            <span className="text-[#800020] font-medium text-sm tracking-widest uppercase mb-2 block">
+              Discover Fashion
             </span>
-            <h2 className="header-reveal text-3xl md:text-5xl font-black uppercase tracking-tight leading-none">
-                Our <span className="text-gray-600">Services</span>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900">
+              Curated <span className="text-gray-500 font-normal">Collections</span>
             </h2>
           </div>
           
-          <button className="header-reveal group hidden md:flex items-center gap-2 rounded-none border border-white/20 px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all hover:bg-[#D4E821] hover:text-black hover:border-[#D4E821]">
-            View All Services
-            <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-          </button>
+          {/* Filter Tabs */}
+          <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 scrollbar-hide snap-x">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveTab(category)}
+                className={`px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors snap-center ${
+                  activeTab === category
+                    ? 'bg-[#800020] text-white shadow-md'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
         </div>
 
         {/* --- GRID --- */}
-        <div className="grid grid-cols-2 gap-3 md:gap-8 lg:grid-cols-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        <div className="grid grid-cols-2 gap-4 md:gap-8 lg:grid-cols-4 min-h-[500px]">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
+            <div className="col-span-full py-20 text-center text-gray-500">
+              No products found in this category.
+            </div>
+          )}
         </div>
 
         {/* Mobile View All Button */}
-        <button className="header-reveal mt-8 w-full md:hidden flex items-center justify-center gap-2 rounded border border-white/20 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all active:bg-[#D4E821] active:text-black">
-            View Full Catalog
+        <Link to="/women" className="mt-10 w-full md:hidden flex items-center justify-center gap-2 border border-gray-300 py-4 text-sm font-bold uppercase tracking-wider text-gray-700 hover:bg-gray-50 transition-colors rounded-md">
+            View All Products
             <ArrowRight size={16} />
-        </button>
+        </Link>
 
       </div>
     </section>
   );
-};
+}
 
+// --- PRODUCT CARD COMPONENT ---
 const ProductCard = ({ product }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const getCategoryIcon = (cat) => {
-    if (cat === 'Photography') return <Camera size={10} className="md:w-3 md:h-3" />;
-    if (cat === 'Graphics') return <Palette size={10} className="md:w-3 md:h-3" />;
-    if (cat === 'Website') return <Globe size={10} className="md:w-3 md:h-3" />;
-    if (cat === 'Print') return <Printer size={10} className="md:w-3 md:h-3" />;
-    return <Layers size={10} className="md:w-3 md:h-3" />;
-  };
+  const navigate = useNavigate();
+  // State to track if the image failed to load
+  const [imgError, setImgError] = useState(false);
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-IN', {
@@ -205,98 +190,109 @@ const ProductCard = ({ product }) => {
     }).format(price);
   };
 
+  const handleAddToCart = (e) => {
+    e.preventDefault(); 
+    e.stopPropagation();
+    navigate('/cart');
+  };
+
+  const handleViewDetails = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/product/${product.id}`);
+  };
+
   return (
-    // Added 'product-card' class for GSAP targeting
-    // Added 'opacity-0' initially so they don't flash before animation starts
-    <div 
-      className="product-card opacity-0 group relative flex flex-col bg-[#0a0a0a] border border-white/10 transition-colors duration-300 md:hover:border-[#D4E821] md:hover:-translate-y-2"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+    <Link 
+      to={`/product/${product.id}`} 
+      className="group flex flex-col cursor-pointer animate-in fade-in zoom-in-95 duration-500"
     >
       {/* Image Area */}
-      <div className="relative aspect-[4/5] overflow-hidden bg-[#1a1a1a] border-b border-white/10">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-700 md:group-hover:scale-110 opacity-90 md:opacity-80 md:group-hover:opacity-100 md:grayscale md:group-hover:grayscale-0"
-        />
+      <div className="relative aspect-[4/5] overflow-hidden bg-gray-100 rounded-lg mb-4">
         
-        {/* Top Badges */}
-        <div className="absolute left-0 top-0 flex flex-col gap-1 p-2 md:p-3 w-full pointer-events-none">
-            <div className="flex flex-col gap-1 items-start">
-                {product.isNew && (
-                    <span className="bg-[#D4E821] px-1.5 py-0.5 md:px-2 md:py-1 text-[8px] md:text-[10px] font-bold text-black uppercase tracking-wider shadow-lg">
-                    NEW
-                    </span>
-                )}
-                {product.isOnSale && (
-                    <span className="bg-white px-1.5 py-0.5 md:px-2 md:py-1 text-[8px] md:text-[10px] font-bold text-black uppercase tracking-wider shadow-lg">
-                    OFFER
-                    </span>
-                )}
-            </div>
-        </div>
+        {/* CONDITIONAL RENDERING: Shows image OR the cloth placeholder */}
+        {!imgError ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+            onError={() => setImgError(true)} // Triggers placeholder on failure
+          />
+        ) : (
+          <div className="h-full w-full flex flex-col items-center justify-center bg-gray-100 text-gray-400 group-hover:bg-gray-200 transition-colors duration-500">
+            <Shirt size={48} strokeWidth={1} className="mb-3 opacity-60" />
+            <span className="text-[10px] font-bold uppercase tracking-widest opacity-60 text-center px-4">
+              Preview <br/> Unavailable
+            </span>
+          </div>
+        )}
         
-        {/* Service Type Badge */}
-        <div className="absolute bottom-2 right-2 bg-black/80 backdrop-blur border border-white/20 px-1.5 py-0.5 md:px-2 md:py-1 text-[8px] md:text-[10px] font-mono text-[#D4E821] uppercase tracking-widest">
-            {product.type}
-        </div>
+        {/* Badge */}
+        {product.badge && (
+          <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 text-[10px] sm:text-xs font-bold text-gray-900 uppercase tracking-wider rounded-sm shadow-sm z-10">
+            {product.badge}
+          </div>
+        )}
 
         {/* Desktop Hover Actions */}
-        <div className={`hidden md:flex absolute bottom-4 left-0 right-0 justify-center gap-2 transition-all duration-300 ${isHovered ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-          <ActionButton icon={<ShoppingCart size={16} />} label="Book Now" highlight />
-          <ActionButton icon={<Heart size={16} />} label="Save" />
-          <ActionButton icon={<Eye size={16} />} label="Details" />
+        <div className="hidden lg:flex absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-t from-black/50 to-transparent z-20">
+          <div className="flex w-full gap-2 justify-center">
+            <button 
+              onClick={handleAddToCart}
+              className="flex-1 bg-white text-gray-900 py-2.5 rounded-sm font-medium hover:bg-[#800020] hover:text-white transition-colors text-sm flex items-center justify-center gap-2 shadow-sm"
+            >
+              <ShoppingBag size={16} /> Add to Cart
+            </button>
+            <button 
+              onClick={handleViewDetails}
+              className="p-2.5 bg-white text-gray-900 rounded-sm hover:text-[#800020] transition-colors shadow-sm"
+            >
+              <Eye size={18} />
+            </button>
+          </div>
         </div>
-
-        {/* Mobile Action Button */}
-        <button className="md:hidden absolute bottom-2 left-2 h-8 w-8 bg-[#D4E821] text-black flex items-center justify-center rounded-sm shadow-lg active:scale-95 transition-transform">
-             <ShoppingCart size={14} fill="black" />
+        
+        {/* Mobile Quick Add Button */}
+        <button 
+          onClick={handleAddToCart}
+          className="lg:hidden absolute bottom-2 right-2 h-9 w-9 sm:h-10 sm:w-10 bg-white/90 backdrop-blur-sm text-gray-900 flex items-center justify-center rounded-full shadow-md active:scale-95 transition-transform z-20"
+        >
+            <ShoppingBag size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       </div>
 
       {/* Content Area */}
-      <div className="p-3 md:p-5 flex-1 flex flex-col">
-        <div className="flex items-center gap-1.5 mb-1.5 text-gray-500">
-            {getCategoryIcon(product.category)}
-            <p className="text-[8px] md:text-[10px] font-mono uppercase tracking-widest truncate">{product.category}</p>
-        </div>
+      <div className="flex-1 flex flex-col">
+        <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mb-1">
+          {product.category}
+        </p>
         
-        <h3 className="mb-2 text-xs md:text-lg font-bold text-white md:group-hover:text-[#D4E821] transition-colors leading-tight line-clamp-2 min-h-[2.5em]">
+        <h3 className="text-sm md:text-base font-medium text-gray-900 group-hover:text-[#800020] transition-colors leading-snug line-clamp-2 mb-2">
           {product.name}
         </h3>
 
-        <div className="mt-auto pt-2 md:pt-4 border-t border-white/10 flex flex-wrap items-end justify-between gap-1">
-            <div className="flex flex-col md:flex-row md:items-baseline md:gap-2">
-                <span className="text-sm md:text-xl font-bold text-white leading-none">{formatPrice(product.price)}</span>
-                {product.oldPrice && (
-                    <span className="text-[10px] md:text-xs text-gray-600 line-through font-mono">
-                    {formatPrice(product.oldPrice)}
-                    </span>
-                )}
-            </div>
+        <div className="mt-auto flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
+          {/* Pricing */}
+          <div className="flex items-center gap-2">
+            <span className="text-base md:text-lg font-bold text-gray-900">
+              {formatPrice(product.price)}
+            </span>
+            {product.oldPrice && (
+              <span className="text-xs text-gray-400 line-through">
+                {formatPrice(product.oldPrice)}
+              </span>
+            )}
+          </div>
 
-            <div className="flex items-center gap-1">
-                <Star size={10} className="fill-[#D4E821] text-[#D4E821] md:w-3 md:h-3" />
-                <span className="text-[10px] md:text-xs text-gray-400 font-mono">{product.rating}</span>
-            </div>
+          {/* Rating */}
+          <div className="flex items-center gap-1">
+            <Star size={10} className="sm:w-3 sm:h-3 fill-[#D4AF37] text-[#D4AF37]" />
+            <span className="text-[10px] sm:text-xs text-gray-500">
+              {product.rating} <span className="hidden sm:inline">({product.reviews})</span>
+            </span>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
-
-const ActionButton = ({ icon, label, highlight }) => (
-  <button 
-    className={`flex h-9 w-9 items-center justify-center border transition-all duration-200
-      ${highlight 
-        ? 'bg-[#D4E821] border-[#D4E821] text-black hover:bg-white hover:border-white' 
-        : 'bg-black/90 border-white/20 text-white hover:border-[#D4E821] hover:text-[#D4E821] backdrop-blur-sm'
-      }`}
-    title={label}
-  >
-    {icon}
-  </button>
-);
-
-export default PopularProducts;

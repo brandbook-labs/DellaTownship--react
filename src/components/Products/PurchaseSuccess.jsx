@@ -1,62 +1,54 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { gsap } from 'gsap';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { 
-  CheckCircle2, Download, Home, CreditCard, MapPin, 
-  Printer, ArrowRight, FileText 
+  CheckCircle2, Download, Home, FileText, Package, Truck
 } from 'lucide-react';
 
 export default function SuccessPage() {
   const location = useLocation();
-  const containerRef = useRef(null);
+  const [isLoaded, setIsLoaded] = useState(false);
   
-  // --- MOCK DATA ---
+  // Trigger entry animation on mount
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+  
+  // --- MOCK APPAREL DATA ---
   const orderData = location.state || {
     orderId: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
     date: new Date().toLocaleDateString(),
     method: 'upi',
     customer: {
-        name: "Rajesh Kumar",
-        mobile: "+91 98765 43210"
+        name: "Priya Sharma",
+        mobile: "+91 98765 43210",
+        address: "Flat 4B, Rose Apartments, Koramangala, Bengaluru, Karnataka - 560034"
     },
     items: [
         {
             id: 1,
-            name: "Promotional Brochures",
-            type: "Print",
-            details: "A4 Tri-fold",
-            hsn: "4901",
-            rate: 15,
-            qty: 500,
-            unit: "pcs",
+            name: "Banarasi Silk Saree",
+            type: "Handloom",
+            details: "Zari Work - Maroon",
+            hsn: "5007",
+            rate: 12500,
+            qty: 1,
+            unit: "pc",
             gstRate: 5,
-            baseAmount: 7500
-        },
-        {
-            id: 2,
-            name: "Wall Calendars",
-            type: "Print",
-            details: "12-Page Matte Finish",
-            hsn: "4910",
-            rate: 250,
-            qty: 50,
-            unit: "pcs",
-            gstRate: 12,
             baseAmount: 12500
         },
         {
-            id: 3,
-            name: "Employee ID Cards",
-            type: "Stationery",
-            details: "PVC with Lanyard", 
-            hsn: "4820",
-            rate: 85,
-            qty: 100,
-            unit: "pcs",
-            gstRate: 18,
-            baseAmount: 8500
+            id: 2,
+            name: "Embroidered Velvet Lehenga",
+            type: "Bridal",
+            details: "Heavy Embroidery",
+            hsn: "6204",
+            rate: 35000,
+            qty: 1,
+            unit: "pc",
+            gstRate: 12,
+            baseAmount: 35000
         }
     ]
   };
@@ -72,29 +64,20 @@ export default function SuccessPage() {
 
   const grandTotal = totals.subtotal + totals.totalTax;
 
-  // --- ANIMATIONS ---
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from(".left-col", { x: -50, opacity: 0, duration: 0.8, ease: "power3.out" });
-      gsap.from(".right-col", { x: 50, opacity: 0, duration: 0.8, delay: 0.2, ease: "power3.out" });
-    }, containerRef);
-    return () => ctx.revert();
-  }, []);
-
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(price);
   };
 
-  // --- PDF GENERATION (Keeps HSN/GST for Official Use) ---
+  // --- PDF GENERATION (Official Invoice) ---
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     
     // Header
-    doc.setFontSize(22); doc.setTextColor(0, 0, 0);
-    doc.text("MoGraphics Agency", 14, 20);
+    doc.setFontSize(22); doc.setTextColor(128, 0, 32); // Maroon color
+    doc.text("House of Mahalaxmi", 14, 20);
     doc.setFontSize(10); doc.setTextColor(100);
-    doc.text("Bhubaneswar, Odisha", 14, 26);
-    doc.text("GSTIN: 21AAAAA0000A1Z5", 14, 31);
+    doc.text("Silk City, Kanchipuram, India", 14, 26);
+    doc.text("GSTIN: 33AAAAA0000A1Z5", 14, 31);
 
     // Invoice Meta
     doc.setFontSize(12); doc.setTextColor(0);
@@ -107,8 +90,12 @@ export default function SuccessPage() {
     doc.line(14, 35, 196, 35);
     doc.text(`Bill To: ${orderData.customer.name}`, 14, 42);
     doc.text(`Mobile: ${orderData.customer.mobile}`, 14, 47);
+    
+    // Split address to fit in PDF
+    const splitAddress = doc.splitTextToSize(`Address: ${orderData.customer.address}`, 100);
+    doc.text(splitAddress, 14, 52);
 
-    // Table Data (Detailed for PDF)
+    // Table Data
     const tableRows = orderData.items.map(item => [
         item.name + `\n(${item.details})`, 
         item.hsn,
@@ -118,11 +105,11 @@ export default function SuccessPage() {
     ]);
 
     doc.autoTable({
-        startY: 55,
+        startY: 65,
         head: [['Description', 'HSN', 'GST', 'Qty', 'Taxable Val']],
         body: tableRows,
         theme: 'grid',
-        headStyles: { fillColor: [20, 20, 20], textColor: [255, 255, 255] },
+        headStyles: { fillColor: [128, 0, 32], textColor: [255, 255, 255] }, // Maroon header
         styles: { fontSize: 9, cellPadding: 3, valign: 'middle' },
         columnStyles: { 0: { cellWidth: 70 }, 4: { halign: 'right' } }
     });
@@ -144,54 +131,61 @@ export default function SuccessPage() {
   };
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#050505] text-white font-sans pt-24 pb-20 overflow-x-hidden">
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans pt-16 md:pt-24 pb-20 overflow-x-hidden">
       
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
         
         {/* --- LEFT COLUMN: Message & Actions --- */}
-        <div className="left-col pt-10">
-            <div className="w-20 h-20 bg-green-500 text-black rounded-full flex items-center justify-center mb-8 shadow-[0_0_50px_-10px_rgba(34,197,94,0.5)]">
+        <div className={`pt-10 transition-all duration-1000 ease-out transform ${isLoaded ? 'translate-x-0 opacity-100' : '-translate-x-12 opacity-0'}`}>
+            
+            <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-8 shadow-sm">
                 <CheckCircle2 size={40} />
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight leading-none mb-6">
-                Order <br/> <span className="text-[#D4E821]">Confirmed</span>
+            <h1 className="text-4xl md:text-6xl font-serif font-bold leading-tight mb-6 text-gray-900">
+                Order <br/> <span className="text-[#800020] font-normal italic">Confirmed</span>
             </h1>
             
-            <p className="text-xl text-gray-400 max-w-md leading-relaxed mb-10">
-                Your order <strong>#{orderData.orderId}</strong> has been successfully placed. We've sent a confirmation email to your registered address.
+            <p className="text-lg text-gray-600 max-w-md leading-relaxed mb-10">
+                Thank you for shopping with us! Your order <strong>#{orderData.orderId}</strong> has been successfully placed. We've sent a confirmation email with your receipt.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 max-w-md">
                  <button 
                     onClick={handleDownloadPDF}
-                    className="flex-1 bg-[#D4E821] text-black font-bold uppercase py-4 rounded-lg flex items-center justify-center gap-2 hover:bg-white transition-colors group"
+                    className="flex-1 bg-[#800020] text-white font-bold uppercase py-4 rounded-md flex items-center justify-center gap-2 hover:bg-[#600018] transition-colors group shadow-md shadow-[#800020]/20"
                  >
                     <Download size={20} /> 
                     <span>Download Invoice</span>
                  </button>
                  
-                 <Link to="/" className="flex-1 bg-[#1a1a1a] border border-white/10 text-white font-bold uppercase py-4 rounded-lg flex items-center justify-center gap-2 hover:bg-[#222] transition-colors">
+                 <Link to="/" className="flex-1 bg-white border border-gray-300 text-gray-700 font-bold uppercase py-4 rounded-md flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors shadow-sm">
                     <Home size={20} /> 
                     <span>Back to Home</span>
                  </Link>
             </div>
 
-            <div className="mt-12 pt-8 border-t border-white/10">
-                <h4 className="text-xs font-bold uppercase text-gray-500 mb-4">What happens next?</h4>
-                <div className="space-y-4">
-                    <div className="flex gap-4">
-                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">1</div>
+            <div className="mt-12 pt-8 border-t border-gray-200">
+                <h4 className="text-sm font-serif font-bold text-gray-900 mb-6 flex items-center gap-2">
+                   What happens next?
+                </h4>
+                <div className="space-y-6">
+                    <div className="flex gap-4 items-start">
+                        <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
+                            <Package size={18} />
+                        </div>
                         <div>
-                            <p className="text-sm font-bold text-white">Order Processing</p>
-                            <p className="text-xs text-gray-500">We verify your requirements and files.</p>
+                            <p className="text-base font-bold text-gray-900">Order Processing</p>
+                            <p className="text-sm text-gray-500 mt-1">We are preparing your items for dispatch. This usually takes 1-2 business days.</p>
                         </div>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">2</div>
+                    <div className="flex gap-4 items-start">
+                        <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 border border-purple-100">
+                            <Truck size={18} />
+                        </div>
                         <div>
-                            <p className="text-sm font-bold text-white">Design & Production</p>
-                            <p className="text-xs text-gray-500">Our team starts working on your assets.</p>
+                            <p className="text-base font-bold text-gray-900">Shipping & Delivery</p>
+                            <p className="text-sm text-gray-500 mt-1">You will receive a tracking link via SMS/Email once your package is handed to our delivery partner.</p>
                         </div>
                     </div>
                 </div>
@@ -199,31 +193,31 @@ export default function SuccessPage() {
         </div>
 
         {/* --- RIGHT COLUMN: The Invoice UI --- */}
-        <div className="right-col w-full">
-            <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden shadow-2xl relative">
+        <div className={`w-full transition-all duration-1000 delay-200 ease-out transform ${isLoaded ? 'translate-x-0 opacity-100' : 'translate-x-12 opacity-0'}`}>
+            <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-xl relative">
                  {/* Top Decor */}
-                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#D4E821] to-transparent opacity-50"></div>
+                 <div className="absolute top-0 left-0 w-full h-1.5 bg-[#800020]"></div>
 
-                 <div className="p-8">
+                 <div className="p-6 md:p-8">
                     {/* Header */}
-                    <div className="flex justify-between items-start mb-8 pb-8 border-b border-white/10">
+                    <div className="flex justify-between items-start mb-8 pb-8 border-b border-gray-100">
                         <div>
-                            <h3 className="text-2xl font-bold uppercase tracking-tighter">Receipt</h3>
-                            <p className="text-xs text-gray-500 font-mono mt-1">{orderData.date}</p>
+                            <h3 className="text-2xl font-serif font-bold text-gray-900">Receipt</h3>
+                            <p className="text-sm text-gray-500 mt-1">{orderData.date}</p>
                         </div>
                         <div className="text-right">
-                             <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full text-green-500 text-xs font-bold uppercase mb-2">
-                                <CheckCircle2 size={12} /> Paid
+                             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 border border-green-200 rounded-full text-green-700 text-xs font-bold uppercase mb-2">
+                                <CheckCircle2 size={14} /> Paid
                              </div>
-                             <p className="text-sm text-gray-400 font-mono">
-                                {orderData.method === 'upi' ? 'Online (UPI)' : 'Cash'}
+                             <p className="text-sm text-gray-500">
+                                {orderData.method === 'upi' ? 'Online (UPI)' : 'Cash on Delivery'}
                              </p>
                         </div>
                     </div>
 
-                    {/* Simple Item List (No HSN/GST Columns) */}
+                    {/* Simple Item List */}
                     <div className="mb-8">
-                        <div className="flex justify-between text-xs text-gray-500 uppercase tracking-widest font-bold mb-4">
+                        <div className="flex justify-between text-xs text-gray-500 uppercase tracking-widest font-bold mb-4 border-b border-gray-100 pb-2">
                             <span>Item Description</span>
                             <span>Amount</span>
                         </div>
@@ -231,14 +225,14 @@ export default function SuccessPage() {
                         <div className="space-y-6">
                             {orderData.items.map((item, i) => (
                                 <div key={i} className="flex justify-between items-start">
-                                    <div>
-                                        <h4 className="text-base font-bold text-white leading-tight">{item.name}</h4>
-                                        <p className="text-xs text-gray-500 font-mono mt-1">
-                                            {item.details} • {item.qty} {item.unit}
+                                    <div className="pr-4">
+                                        <h4 className="text-base font-bold text-gray-900 leading-tight">{item.name}</h4>
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            {item.details} • Qty: {item.qty}
                                         </p>
                                     </div>
-                                    <div className="text-right">
-                                        <span className="block text-base font-mono text-white">
+                                    <div className="text-right shrink-0">
+                                        <span className="block text-base font-medium text-gray-900">
                                             {formatPrice(item.baseAmount)}
                                         </span>
                                     </div>
@@ -248,18 +242,18 @@ export default function SuccessPage() {
                     </div>
 
                     {/* Totals Section */}
-                    <div className="bg-[#0a0a0a] rounded-xl p-6 border border-white/5 space-y-3">
-                        <div className="flex justify-between text-sm text-gray-400">
+                    <div className="bg-gray-50 rounded-xl p-6 border border-gray-100 space-y-3">
+                        <div className="flex justify-between text-sm text-gray-600">
                             <span>Subtotal</span>
-                            <span className="font-mono">{formatPrice(totals.subtotal)}</span>
+                            <span className="font-medium text-gray-900">{formatPrice(totals.subtotal)}</span>
                         </div>
-                        <div className="flex justify-between text-sm text-gray-400">
-                            <span>Total GST</span>
-                            <span className="font-mono">{formatPrice(totals.totalTax)}</span>
+                        <div className="flex justify-between text-sm text-gray-600">
+                            <span>Estimated GST</span>
+                            <span className="font-medium text-gray-900">{formatPrice(totals.totalTax)}</span>
                         </div>
-                        <div className="border-t border-white/10 pt-4 flex justify-between items-end mt-2">
-                            <span className="text-base font-bold uppercase text-white">Grand Total</span>
-                            <span className="text-3xl font-bold text-[#D4E821] font-mono leading-none">
+                        <div className="border-t border-gray-200 pt-4 flex justify-between items-end mt-2">
+                            <span className="text-base font-bold uppercase text-gray-900">Grand Total</span>
+                            <span className="text-3xl font-serif font-bold text-[#800020] leading-none">
                                 {formatPrice(grandTotal)}
                             </span>
                         </div>
@@ -267,8 +261,9 @@ export default function SuccessPage() {
 
                  </div>
 
-                 <div className="bg-[#1a1a1a] p-4 text-center border-t border-white/5 flex items-center justify-center gap-2 text-gray-500 text-xs uppercase tracking-widest">
-                    <FileText size={14} /> Official Tax Invoice available via download
+                 {/* Footer note */}
+                 <div className="bg-gray-50 p-4 text-center border-t border-gray-200 flex items-center justify-center gap-2 text-gray-500 text-xs uppercase tracking-widest">
+                    <FileText size={16} /> Official Tax Invoice available via download
                  </div>
             </div>
         </div>

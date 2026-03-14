@@ -1,14 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { gsap } from 'gsap';
 import { 
   ArrowRight, Smartphone, User, CheckCircle2, 
-  Wallet, Banknote, ShieldCheck, Loader2, X, Smartphone as MobileIcon, Clock 
+  Wallet, Banknote, ShieldCheck, Loader2, X, Clock, MapPin
 } from 'lucide-react';
-
-// --- CONFIGURATION ---
-const MERCHANT_VPA = "mographics@upi"; 
-const MERCHANT_NAME = "MoGraphics Agency";
 
 // --- MOCK DATABASE ---
 const EXISTING_USERS = ['9876543210', '9999999999']; 
@@ -19,23 +14,28 @@ export default function CheckoutPage() {
   // Data State
   const [mobile, setMobile] = useState('');
   const [name, setName] = useState('');
-  const [totalAmount] = useState(105020); 
+  const [address, setAddress] = useState({
+    flat: '',
+    area: '',
+    pincode: '',
+    city: '',
+    state: ''
+  });
+  const [totalAmount] = useState(50000); 
   
   // Logic State
   const [isChecking, setIsChecking] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
   const [isMobileValid, setIsMobileValid] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('upi');
+  
+  // Forced strictly to cash since Online Payments are hidden
+  const [paymentMethod] = useState('cash'); 
   
   // Modal / Gateway State
   const [showGateway, setShowGateway] = useState(false);
   const [orderStatus, setOrderStatus] = useState('pending'); // pending -> processing -> success
 
-  // Refs
-  const nameFieldRef = useRef(null);
-  const gatewayRef = useRef(null);
-
-  // --- 1. IDENTITY LOGIC ---
+  // --- 1. IDENTITY & ADDRESS LOGIC ---
   const handleMobileChange = (e) => {
     const val = e.target.value.replace(/\D/g, '').slice(0, 10);
     setMobile(val);
@@ -43,33 +43,38 @@ export default function CheckoutPage() {
     if (val.length < 10) {
         setIsMobileValid(false);
         setIsNewUser(false);
-        gsap.to(nameFieldRef.current, { height: 0, opacity: 0, duration: 0.3 });
     }
+  };
+
+  const handleAddressChange = (e) => {
+    setAddress({ ...address, [e.target.name]: e.target.value });
   };
 
   useEffect(() => {
     if (mobile.length === 10) {
         setIsChecking(true);
+        // Simulate API call to check if user exists
         setTimeout(() => {
             setIsChecking(false);
             setIsMobileValid(true);
             if (!EXISTING_USERS.includes(mobile)) {
                 setIsNewUser(true);
-                gsap.fromTo(nameFieldRef.current, 
-                    { height: 0, opacity: 0 },
-                    { height: "auto", opacity: 1, duration: 0.4, ease: "power2.out" }
-                );
             }
         }, 800);
     }
   }, [mobile]);
 
-  // --- 2. ORDER INITIATION ---
+  // --- 2. ORDER INITIATION & VALIDATION ---
   const handleProceed = () => {
-    if (!isMobileValid) return alert("Enter valid mobile number");
-    if (isNewUser && name.length < 2) return alert("Enter your name");
+    if (!isMobileValid) return alert("Please enter a valid 10-digit mobile number.");
+    if (isNewUser && name.length < 2) return alert("Please enter your name.");
     
-    // Open the Universal Gateway Modal
+    // Validate Address
+    if (!address.flat || !address.area || !address.pincode || !address.city || !address.state) {
+        return alert("Please fill in your complete shipping address.");
+    }
+    
+    // Open the Gateway Modal
     setOrderStatus('pending');
     setShowGateway(true);
   };
@@ -77,64 +82,60 @@ export default function CheckoutPage() {
   // --- 3. SIMULATION LOGIC (Backend Replacement) ---
   useEffect(() => {
     if (showGateway && orderStatus === 'pending') {
-        // Animate Modal In
-        gsap.fromTo(gatewayRef.current, 
-            { y: "100%" }, 
-            { y: "0%", duration: 0.5, ease: "power3.out" }
-        );
 
-        // LOGIC FOR CASH VS UPI
+        // LOGIC FOR CASH ONLY
         if (paymentMethod === 'cash') {
-            // SIMULATE ADMIN APPROVAL (Cash Flow)
-            // In real app: This would be a WebSocket waiting for Admin Dashboard response
-            const adminTimer = setTimeout(() => {
-                setOrderStatus('processing'); // Admin saw request
+            // SIMULATE COD VERIFICATION
+            const codTimer = setTimeout(() => {
+                setOrderStatus('processing'); 
                 setTimeout(() => {
-                    setOrderStatus('success'); // Admin clicked "Accept"
-                    setTimeout(() => navigate('/success'), 2000);
-                }, 3000);
-            }, 4000); 
-            return () => clearTimeout(adminTimer);
-
-        } else {
-            // SIMULATE PAYMENT VERIFICATION (UPI Flow)
+                    setOrderStatus('success'); 
+                    setTimeout(() => navigate('/success'), 2000); // Redirect to success page
+                }, 2000);
+            }, 3000); 
+            return () => clearTimeout(codTimer);
+        }
+        
+        // ONLINE PAYMENT LOGIC COMMENTED OUT
+        /* else {
             const upiTimer = setTimeout(() => {
-                setOrderStatus('processing'); // Payment detected
+                setOrderStatus('processing');
                 setTimeout(() => {
-                    setOrderStatus('success'); // Payment captured
+                    setOrderStatus('success');
                     setTimeout(() => navigate('/success'), 2000);
                 }, 2000);
             }, 8000);
             return () => clearTimeout(upiTimer);
-        }
+        } */
     }
   }, [showGateway, paymentMethod, orderStatus, navigate]);
 
-  // Generate UPI Links
-  const upiLink = `upi://pay?pa=${MERCHANT_VPA}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${totalAmount}&tn=Order_${mobile}`;
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
+  const formatPrice = (price) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(price);
+
+  // Shared input styling for cleaner code
+  const inputClass = "w-full bg-transparent border-b-2 border-gray-200 h-12 text-base text-gray-900 placeholder-gray-400 focus:border-[#800020] focus:outline-none transition-colors";
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white font-sans pt-24 pb-20 relative">
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans pt-12 md:pt-24 pb-20 relative">
       
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         
         {/* Header */}
-        <div className="mb-12 border-b border-white/10 pb-6">
-           <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-none">
-              Fast <span className="text-gray-600">Checkout</span>
+        <div className="mb-8 md:mb-12 border-b border-gray-200 pb-6 text-center md:text-left">
+           <h1 className="text-3xl md:text-5xl font-serif font-bold text-gray-900 leading-none">
+             Secure <span className="text-gray-400 font-normal">Checkout</span>
            </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
-            {/* === LEFT: IDENTITY & PAYMENT SELECTION === */}
-            <div className="lg:col-span-8 space-y-8">
+            {/* === LEFT: IDENTITY, ADDRESS & PAYMENT SELECTION === */}
+            <div className="lg:col-span-8 space-y-6 md:space-y-8">
                
-               {/* Identity */}
-               <section className="bg-[#0a0a0a] border border-white/10 rounded-xl p-6 md:p-8">
-                    <h2 className="text-sm font-bold uppercase text-gray-500 tracking-widest mb-6 flex items-center gap-2">
-                       <Smartphone size={16} className="text-[#D4E821]" />
+               {/* Contact Details */}
+               <section className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 md:p-8">
+                    <h2 className="text-lg font-serif font-bold text-gray-900 mb-6 flex items-center gap-2">
+                       <Smartphone size={20} className="text-[#800020]" />
                        Contact Details
                     </h2>
                     <div className="space-y-6">
@@ -144,82 +145,133 @@ export default function CheckoutPage() {
                             value={mobile}
                             onChange={handleMobileChange}
                             placeholder="Mobile Number"
-                            className="w-full bg-transparent border-b border-white/20 h-14 pl-12 text-2xl font-mono text-white placeholder-gray-700 focus:border-[#D4E821] focus:outline-none transition-colors"
+                            className="w-full bg-transparent border-b-2 border-gray-200 h-14 pl-12 text-xl tracking-wide text-gray-900 placeholder-gray-400 focus:border-[#800020] focus:outline-none transition-colors"
                           />
-                          <span className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-xl">+91</span>
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500 font-medium text-lg">+91</span>
                           <div className="absolute right-0 top-1/2 -translate-y-1/2">
-                             {isChecking && <Loader2 className="animate-spin text-gray-500" size={20} />}
-                             {!isChecking && isMobileValid && !isNewUser && <span className="text-xs font-bold text-[#D4E821] uppercase bg-[#D4E821]/10 px-2 py-1 rounded">Welcome Back</span>}
-                             {!isChecking && isMobileValid && isNewUser && <span className="text-xs font-bold text-gray-500 uppercase bg-white/10 px-2 py-1 rounded">New User</span>}
+                             {isChecking && <Loader2 className="animate-spin text-[#800020]" size={20} />}
+                             {!isChecking && isMobileValid && !isNewUser && (
+                               <span className="text-xs font-bold text-[#800020] uppercase bg-[#800020]/10 px-3 py-1.5 rounded-full">
+                                 Welcome Back
+                               </span>
+                             )}
+                             {!isChecking && isMobileValid && isNewUser && (
+                               <span className="text-xs font-bold text-gray-600 uppercase bg-gray-100 px-3 py-1.5 rounded-full">
+                                 New User
+                               </span>
+                             )}
                           </div>
                        </div>
-                       <div ref={nameFieldRef} className="overflow-hidden h-0 opacity-0">
-                          <div className="pt-2 pb-2">
-                             <div className="relative">
-                                <input 
-                                  type="text" 
-                                  value={name}
-                                  onChange={(e) => setName(e.target.value)}
-                                  placeholder="Enter your Name *"
-                                  className="w-full bg-transparent border-b border-white/20 h-12 pl-8 text-lg text-white placeholder-gray-700 focus:border-[#D4E821] focus:outline-none transition-colors"
-                                />
-                                <User size={18} className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-500" />
-                             </div>
+                       
+                       {/* Name Field (Expands smoothly using native CSS) */}
+                       <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isNewUser ? 'max-h-24 opacity-100 mt-6' : 'max-h-0 opacity-0 mt-0'}`}>
+                          <div className="relative">
+                            <input 
+                              type="text" 
+                              value={name}
+                              onChange={(e) => setName(e.target.value)}
+                              placeholder="Full Name *"
+                              className="w-full bg-transparent border-b-2 border-gray-200 h-14 pl-10 text-lg text-gray-900 placeholder-gray-400 focus:border-[#800020] focus:outline-none transition-colors"
+                            />
+                            <User size={20} className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400" />
                           </div>
                        </div>
                     </div>
                </section>
 
+               {/* Shipping Address */}
+               <section className={`bg-white border border-gray-200 shadow-sm rounded-xl p-6 md:p-8 overflow-hidden transition-all duration-500 ease-in-out ${isMobileValid ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0 p-0 border-0 shadow-none'}`}>
+                    <h2 className="text-lg font-serif font-bold text-gray-900 mb-6 flex items-center gap-2">
+                       <MapPin size={20} className="text-[#800020]" />
+                       Shipping Address
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                        <div className="md:col-span-2">
+                           <input 
+                             type="text" name="flat" value={address.flat} onChange={handleAddressChange}
+                             placeholder="Flat, House no., Building, Apartment *"
+                             className={inputClass}
+                           />
+                        </div>
+                        <div className="md:col-span-2">
+                           <input 
+                             type="text" name="area" value={address.area} onChange={handleAddressChange}
+                             placeholder="Area, Street, Sector, Village *"
+                             className={inputClass}
+                           />
+                        </div>
+                        <div>
+                           <input 
+                             type="text" name="pincode" value={address.pincode} onChange={handleAddressChange}
+                             placeholder="Pincode *"
+                             maxLength="6"
+                             className={inputClass}
+                           />
+                        </div>
+                        <div>
+                           <input 
+                             type="text" name="city" value={address.city} onChange={handleAddressChange}
+                             placeholder="Town / City *"
+                             className={inputClass}
+                           />
+                        </div>
+                        <div className="md:col-span-2">
+                           <input 
+                             type="text" name="state" value={address.state} onChange={handleAddressChange}
+                             placeholder="State *"
+                             className={inputClass}
+                           />
+                        </div>
+                    </div>
+               </section>
+
                {/* Payment Method Selector */}
-               <section className="bg-[#0a0a0a] border border-white/10 rounded-xl p-6 md:p-8">
-                    <h2 className="text-sm font-bold uppercase text-gray-500 tracking-widest mb-6 flex items-center gap-2">
-                       <Wallet size={16} className="text-[#D4E821]" />
+               <section className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 md:p-8">
+                    <h2 className="text-lg font-serif font-bold text-gray-900 mb-6 flex items-center gap-2">
+                       <Wallet size={20} className="text-[#800020]" />
                        Payment Method
                     </h2>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        
+                        {/* ONLINE PAYMENT COMMENTED OUT
                         <button 
                            onClick={() => setPaymentMethod('upi')}
-                           className={`flex items-center gap-3 px-6 py-4 rounded-lg border transition-all duration-300 flex-1 justify-center md:flex-none md:justify-start
-                              ${paymentMethod === 'upi' ? 'bg-[#D4E821] border-[#D4E821] text-black' : 'bg-[#111] border-white/10 text-gray-400 hover:text-white'}
-                           `}
+                           className={`...`}
                         >
-                           <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMethod === 'upi' ? 'border-black' : 'border-gray-500'}`}>
-                              {paymentMethod === 'upi' && <div className="w-2 h-2 bg-black rounded-full"></div>}
-                           </div>
-                           <span className="font-bold uppercase tracking-wider text-sm">UPI / Online</span>
+                           ...
+                           <span className="font-bold tracking-wide text-sm">UPI / Online Pay</span>
                         </button>
+                        */}
 
                         <button 
-                           onClick={() => setPaymentMethod('cash')}
-                           className={`flex items-center gap-3 px-6 py-4 rounded-lg border transition-all duration-300 flex-1 justify-center md:flex-none md:justify-start
-                              ${paymentMethod === 'cash' ? 'bg-[#D4E821] border-[#D4E821] text-black' : 'bg-[#111] border-white/10 text-gray-400 hover:text-white'}
-                           `}
+                           // onClick={() => setPaymentMethod('cash')} // No longer needed as it's the only option
+                           className={`flex items-center gap-3 px-6 py-4 rounded-lg border-2 transition-all duration-300 flex-1 justify-start bg-[#800020]/5 border-[#800020] text-[#800020]`}
                         >
-                           <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${paymentMethod === 'cash' ? 'border-black' : 'border-gray-500'}`}>
-                              {paymentMethod === 'cash' && <div className="w-2 h-2 bg-black rounded-full"></div>}
+                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center border-[#800020]`}>
+                              <div className="w-2.5 h-2.5 bg-[#800020] rounded-full"></div>
                            </div>
-                           <span className="font-bold uppercase tracking-wider text-sm">Cash Request</span>
+                           <span className="font-bold tracking-wide text-sm">Cash on Delivery</span>
                         </button>
                     </div>
                </section>
             </div>
 
             {/* === RIGHT: SUMMARY & ACTION === */}
-            <div className="lg:col-span-4 lg:sticky lg:top-8">
-               <div className="bg-[#111] border border-white/10 rounded-xl p-6 md:p-8">
-                  <h3 className="text-xs font-bold uppercase text-gray-500 tracking-widest mb-6">Order Summary</h3>
-                  <div className="space-y-3 mb-8">
-                      <div className="flex justify-between items-center text-sm text-gray-400">
+            <div className="lg:col-span-4 lg:sticky lg:top-24">
+               <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 md:p-8">
+                  <h3 className="text-xl font-serif font-bold text-gray-900 mb-6">Order Summary</h3>
+                  <div className="space-y-4 mb-8">
+                      <div className="flex justify-between items-center text-sm text-gray-600">
                           <span>Subtotal</span>
-                          <span className="font-mono">₹89,000</span>
+                          <span className="font-medium text-gray-900">{formatPrice(42372)}</span>
                       </div>
-                      <div className="flex justify-between items-center text-sm text-gray-400">
-                          <span>GST (18%)</span>
-                          <span className="font-mono">₹16,020</span>
+                      <div className="flex justify-between items-center text-sm text-gray-600">
+                          <span>Estimated GST</span>
+                          <span className="font-medium text-gray-900">{formatPrice(7628)}</span>
                       </div>
-                      <div className="pt-4 mt-2 border-t border-white/10 flex justify-between items-center">
-                          <span className="text-base font-bold text-white uppercase">Total</span>
-                          <span className="text-2xl font-bold text-[#D4E821] font-mono">₹1,05,020</span>
+                      <div className="pt-4 mt-2 border-t border-gray-200 flex justify-between items-end">
+                          <span className="text-base font-bold text-gray-900">Total</span>
+                          <span className="text-3xl font-serif font-bold text-[#800020] leading-none">{formatPrice(totalAmount)}</span>
                       </div>
                   </div>
 
@@ -227,17 +279,17 @@ export default function CheckoutPage() {
                   <button 
                       onClick={handleProceed}
                       disabled={!isMobileValid}
-                      className={`w-full bg-[#D4E821] hover:bg-white text-black font-bold uppercase py-5 rounded text-sm tracking-widest transition-all flex items-center justify-center gap-2 group 
-                        ${!isMobileValid ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}
+                      className={`w-full font-bold uppercase py-4 rounded-md text-sm tracking-widest transition-all flex items-center justify-center gap-2 group shadow-md shadow-[#800020]/20
+                        ${!isMobileValid ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none' : 'bg-[#800020] hover:bg-[#600018] text-white'}
                       `}
                   >
-                      {paymentMethod === 'upi' ? 'Pay with UPI' : 'Send Request'}
-                      <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                      Place Order
+                      <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </button>
 
-                  <div className="mt-6 flex items-center justify-center gap-2 text-[10px] text-gray-500 font-mono uppercase">
-                      <ShieldCheck size={12} className="text-[#D4E821]" />
-                      Secure SSL Connection
+                  <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500 font-medium uppercase tracking-wide">
+                      <ShieldCheck size={16} className="text-green-600" />
+                      Secure Encrypted Checkout
                   </div>
                </div>
             </div>
@@ -249,60 +301,45 @@ export default function CheckoutPage() {
       {/* === UNIFIED PAYMENT/REQUEST MODAL === */}
       {/* ============================================== */}
       {showGateway && (
-        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/80 backdrop-blur-sm p-0 md:p-4">
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-gray-900/60 backdrop-blur-sm p-0 md:p-4 transition-opacity">
             
-            <div 
-                ref={gatewayRef}
-                className="w-full md:w-[450px] bg-[#1a1a1a] border border-white/10 rounded-t-2xl md:rounded-2xl shadow-2xl overflow-hidden relative"
-            >
+            <div className="w-full md:w-[450px] bg-white border border-gray-200 rounded-t-2xl md:rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-10 md:zoom-in-95 duration-300">
                 {/* Modal Header */}
-                <div className="bg-black/50 p-4 flex justify-between items-center border-b border-white/10">
-                    <div className="flex items-center gap-2 text-[#D4E821] text-xs font-bold uppercase tracking-wider">
-                        <ShieldCheck size={14} /> MoGraphics Gateway
+                <div className="bg-gray-50 p-4 flex justify-between items-center border-b border-gray-200">
+                    <div className="flex items-center gap-2 text-[#800020] text-sm font-bold tracking-wide">
+                        <ShieldCheck size={18} /> Secure Gateway
                     </div>
-                    <button onClick={() => setShowGateway(false)} className="text-gray-500 hover:text-white">
-                        <X size={20} />
+                    <button onClick={() => setShowGateway(false)} className="text-gray-400 hover:text-gray-900 transition-colors">
+                        <X size={24} />
                     </button>
                 </div>
 
                 <div className="p-6 md:p-8 flex flex-col items-center text-center">
                     
                     {/* Amount Display */}
-                    <p className="text-gray-400 text-xs font-mono uppercase mb-1">Total Amount</p>
-                    <h2 className="text-4xl font-bold text-white font-mono mb-8">₹1,05,020</h2>
+                    <p className="text-gray-500 text-sm font-medium uppercase mb-1 tracking-wider">Amount to Pay</p>
+                    <h2 className="text-4xl font-serif font-bold text-gray-900 mb-8">{formatPrice(totalAmount)}</h2>
 
-                    {/* --- CASE 1: UPI PAYMENT --- */}
-                    {paymentMethod === 'upi' && orderStatus === 'pending' && (
-                        <>
-                            <div className="hidden md:block bg-white p-3 rounded-xl mb-6 shadow-lg">
-                                <img src={qrCodeUrl} alt="UPI QR" className="w-48 h-48 mix-blend-multiply" />
-                            </div>
-                            <div className="md:hidden w-full space-y-3 mb-6">
-                                <a href={upiLink} className="flex items-center justify-center gap-3 w-full bg-[#111] hover:bg-[#222] border border-white/10 text-white font-bold py-4 rounded-lg transition-colors">
-                                    <MobileIcon size={20} className="text-[#D4E821]" /> Pay via UPI App
-                                </a>
-                            </div>
-                            <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-full text-yellow-500 text-xs font-bold animate-pulse">
-                                <Loader2 size={12} className="animate-spin" /> Waiting for payment...
-                            </div>
-                        </>
-                    )}
+                    {/* --- CASE 1: UPI PAYMENT COMMENTED OUT --- */}
+                    {/* {paymentMethod === 'upi' && orderStatus === 'pending' && (
+                        ...
+                    )} */}
 
-                    {/* --- CASE 2: CASH REQUEST --- */}
+                    {/* --- CASE 2: CASH ON DELIVERY --- */}
                     {paymentMethod === 'cash' && orderStatus === 'pending' && (
                         <>
-                            <div className="w-24 h-24 bg-[#111] border border-white/10 rounded-full flex items-center justify-center mb-6 relative">
+                            <div className="w-24 h-24 bg-gray-50 border border-gray-200 rounded-full flex items-center justify-center mb-6 relative">
                                 <Banknote size={40} className="text-gray-400" />
-                                <div className="absolute -bottom-1 -right-1 bg-yellow-500 text-black rounded-full p-1.5 border-4 border-[#1a1a1a]">
+                                <div className="absolute -bottom-1 -right-1 bg-yellow-400 text-yellow-900 rounded-full p-2 border-4 border-white shadow-sm">
                                     <Clock size={16} className="animate-spin-slow" /> 
                                 </div>
                             </div>
-                            <h3 className="text-lg font-bold text-white mb-2">Request Sent to Admin</h3>
-                            <p className="text-sm text-gray-400 mb-6 max-w-xs mx-auto">
-                                We have notified the store admin. Please wait while they confirm your cash order request.
+                            <h3 className="text-xl font-serif font-bold text-gray-900 mb-2">Processing Order</h3>
+                            <p className="text-base text-gray-500 mb-6 max-w-xs mx-auto">
+                                Please wait while we confirm your Cash on Delivery order.
                             </p>
-                            <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-400 text-xs font-bold animate-pulse">
-                                <Loader2 size={12} className="animate-spin" /> Awaiting Confirmation...
+                            <div className="flex items-center gap-2 px-5 py-2.5 bg-blue-50 border border-blue-200 rounded-full text-blue-700 text-sm font-medium animate-pulse">
+                                <Loader2 size={16} className="animate-spin" /> Verifying details...
                             </div>
                         </>
                     )}
@@ -310,21 +347,21 @@ export default function CheckoutPage() {
                     {/* --- COMMON STATES: PROCESSING & SUCCESS --- */}
                     {orderStatus === 'processing' && (
                         <div className="py-10">
-                            <Loader2 size={48} className="text-[#D4E821] animate-spin mb-4 mx-auto" />
-                            <h3 className="text-xl font-bold text-white uppercase">
-                                {paymentMethod === 'cash' ? 'Admin is reviewing...' : 'Verifying Payment...'}
+                            <Loader2 size={48} className="text-[#800020] animate-spin mb-6 mx-auto" />
+                            <h3 className="text-xl font-serif font-bold text-gray-900">
+                                Finalizing Order...
                             </h3>
                         </div>
                     )}
 
                     {orderStatus === 'success' && (
-                        <div className="py-10">
-                            <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 text-black">
-                                <CheckCircle2 size={32} />
+                        <div className="py-10 animate-in zoom-in duration-300">
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600">
+                                <CheckCircle2 size={40} />
                             </div>
-                            <h3 className="text-xl font-bold text-white uppercase">Order Confirmed!</h3>
-                            <p className="text-gray-500 text-sm mt-2">
-                                {paymentMethod === 'cash' ? 'Pay cash on delivery.' : 'Payment received successfully.'}
+                            <h3 className="text-2xl font-serif font-bold text-gray-900">Order Confirmed!</h3>
+                            <p className="text-gray-500 text-base mt-2">
+                                You can pay using cash upon delivery.
                             </p>
                         </div>
                     )}

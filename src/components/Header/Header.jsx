@@ -70,11 +70,11 @@ const Navbar = () => {
           
           {/* --- UPGRADED LOGO SECTION --- */}
           <a href="/" className="flex-shrink-0 flex items-center gap-3 z-50 group">
-             <img 
+             {/* <img 
                src="https://jivan.website/jivan.png" 
                alt="House of Mahalaxmi Logo" 
                className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
-             />
+             /> */}
              <div className="flex flex-col justify-center">
                <span className="text-[9px] sm:text-[10px] tracking-[0.35em] uppercase text-gray-500 font-medium leading-none mb-1 ml-0.5">
                  House of
@@ -88,9 +88,9 @@ const Navbar = () => {
           {/* --- DESKTOP NAVIGATION --- */}
           <div className="hidden md:flex items-center space-x-8">
             <a href="/" className="hover:text-[#800020] transition-colors font-medium">Home</a>
-            <a href="/new-arrivals" className="hover:text-[#800020] transition-colors font-medium">New Arrivals</a>
             <a href="/women" className="hover:text-[#800020] transition-colors font-medium">Women</a>
             <a href="/men" className="hover:text-[#800020] transition-colors font-medium">Men</a>
+            <a href="/kids" className="hover:text-[#800020] transition-colors font-medium">Kids</a>
         
             {/* Collections Dropdown */}
             <div 

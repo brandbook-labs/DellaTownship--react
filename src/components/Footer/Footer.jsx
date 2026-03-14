@@ -1,16 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ArrowUp, Instagram, Twitter, Linkedin, ArrowUpRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ArrowUp, Instagram, Facebook, Twitter, ArrowRight, MapPin } from 'lucide-react';
 
 export default function Footer() {
   const [time, setTime] = useState("");
-  const marqueeRef = useRef(null);
 
-  // Live Time (Bhubaneswar)
+  // Live Time (India)
   useEffect(() => {
     const updateTime = () => {
       setTime(new Date().toLocaleTimeString('en-US', { 
-        hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' 
+        hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' 
       }));
     };
     const t = setInterval(updateTime, 1000);
@@ -18,117 +16,139 @@ export default function Footer() {
     return () => clearInterval(t);
   }, []);
 
-  // Infinite Scroll Animation
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to(marqueeRef.current, {
-        xPercent: -50,
-        repeat: -1,
-        duration: 20,
-        ease: "linear",
-      });
-    });
-    return () => ctx.revert();
-  }, []);
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // E-commerce marquee messages
+  const marqueeMessages = [
+    "FREE SHIPPING ACROSS INDIA",
+    "100% AUTHENTIC HANDLOOM",
+    "NEW FESTIVE COLLECTION",
+    "SECURE CHECKOUT",
+    "EASY RETURNS"
+  ];
+
   return (
-    <footer className="bg-[#050505] text-white border-t border-white/10 font-sans overflow-hidden">
+    <footer className="bg-white text-gray-900 border-t border-gray-200 font-sans overflow-hidden">
       
       {/* === 1. MARQUEE BORDER === */}
-      <div className="relative border-b border-white/10 py-3 md:py-4 overflow-hidden bg-[#0a0a0a]">
-        <div className="flex whitespace-nowrap" ref={marqueeRef}>
-           {[...Array(10)].map((_, i) => (
-             <div key={i} className="flex items-center gap-4 md:gap-8 mx-2 md:mx-4">
-                <span className="text-[9px] md:text-xs font-mono font-bold uppercase tracking-widest text-[#D4E821]">
-                   /// SYSTEM_ONLINE
-                </span>
-                <span className="text-[9px] md:text-xs font-mono font-bold uppercase tracking-widest text-gray-600">
-                   CREATIVE_INFRASTRUCTURE
-                </span>
+      <div className="relative border-b border-gray-200 py-3 overflow-hidden bg-gray-50">
+        <div className="flex whitespace-nowrap opacity-80" style={{ animation: 'marquee 30s linear infinite' }}>
+           {/* Render multiple times for infinite scroll effect */}
+           {[...Array(4)].map((_, i) => (
+             <div key={i} className="flex items-center">
+                {marqueeMessages.map((msg, idx) => (
+                  <div key={idx} className="flex items-center">
+                    <span className="text-xs font-medium tracking-widest uppercase text-gray-600 px-6">
+                      {msg}
+                    </span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#800020]/40"></span>
+                  </div>
+                ))}
              </div>
            ))}
         </div>
       </div>
 
-      {/* === 2. MAIN GRID (Bento Layout on Mobile) === */}
-      {/* CHANGED: grid-cols-2 on mobile allows side-by-side links */}
-      <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-10 md:gap-12">
+      {/* === 2. MAIN GRID === */}
+      <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-2 md:grid-cols-12 gap-x-4 gap-y-10 md:gap-8">
          
-         {/* Branding - Spans 2 columns on Mobile for visibility */}
-         <div className="col-span-2 md:col-span-1">
-            <img src="./src/assets/png/TekNeoFyLogo.png" alt="MoGraphics" className="h-5 md:h-6 w-auto mb-4 md:mb-6 opacity-80" />
-            <p className="text-[10px] text-gray-500 font-mono uppercase tracking-wider leading-relaxed max-w-xs">
-               Odisha's Digital Forge.<br/>
-               Assets & Agency.
+         {/* Branding - Spans wider on larger screens */}
+         <div className="col-span-2 md:col-span-4 flex flex-col justify-start">
+            <a href="/" className="flex flex-col justify-center mb-6 w-fit">
+               <span className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gray-500 font-medium leading-none mb-1 ml-0.5">
+                 House of
+               </span>
+               <span className="text-2xl sm:text-3xl font-serif font-bold tracking-wide text-gray-900 leading-none">
+                 MAHALAXMI<span className="text-[#800020]">.</span>
+               </span>
+            </a>
+            <p className="text-sm text-gray-600 leading-relaxed max-w-sm">
+               Discover timeless elegance woven into every thread. Premium silk sarees, lehengas, and ethnic fashion for the modern woman.
             </p>
          </div>
 
-         {/* Navigation - Left side on Mobile */}
-         <div className="flex flex-col gap-3 col-span-1">
-            <h4 className="font-mono text-[10px] text-[#D4E821] uppercase tracking-widest mb-1 md:mb-2">Index</h4>
-            <a href="/shop" className="text-sm text-gray-400 hover:text-white transition-colors w-fit py-1">Asset Store</a>
-            <a href="/services" className="text-sm text-gray-400 hover:text-white transition-colors w-fit py-1">Agency Services</a>
-            <a href="/work" className="text-sm text-gray-400 hover:text-white transition-colors w-fit py-1">Portfolio</a>
+         {/* Shop Links */}
+         <div className="flex flex-col gap-4 col-span-1 md:col-span-2 md:col-start-6">
+            <h4 className="font-serif text-lg font-bold text-gray-900">Shop</h4>
+            <a href="/new-arrivals" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">New Arrivals</a>
+            <a href="/sarees" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Silk Sarees</a>
+            <a href="/festive" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Festive Wear</a>
+            <a href="/accessories" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Accessories</a>
          </div>
 
-         {/* Socials - Right side on Mobile */}
-         <div className="flex flex-col gap-3 col-span-1">
-            <h4 className="font-mono text-[10px] text-[#D4E821] uppercase tracking-widest mb-1 md:mb-2">Network</h4>
-            {[
-               { name: 'Instagram', icon: Instagram },
-               { name: 'LinkedIn', icon: Linkedin },
-               { name: 'Twitter', icon: Twitter }
-            ].map(social => (
-               <a key={social.name} href="#" className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors group w-fit py-1">
-                  <social.icon size={14} /> 
-                  <span>{social.name}</span>
-                  <ArrowUpRight size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+         {/* Support Links */}
+         <div className="flex flex-col gap-4 col-span-1 md:col-span-2">
+            <h4 className="font-serif text-lg font-bold text-gray-900">Support</h4>
+            <a href="/contact" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Contact Us</a>
+            <a href="/faq" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">FAQs</a>
+            <a href="/shipping" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Shipping Policy</a>
+            <a href="/returns" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Returns & Exchanges</a>
+         </div>
+
+         {/* Contact & Socials */}
+         <div className="flex flex-col gap-4 col-span-2 md:col-span-3">
+            <h4 className="font-serif text-lg font-bold text-gray-900">Get in Touch</h4>
+            
+            <a href="mailto:support@houseofmahalaxmi.com" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">
+               support@houseofmahalaxmi.com
+            </a>
+            <a href="tel:+919876543210" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit mb-2">
+               +91 98765 43210
+            </a>
+
+            {/* Social Icons */}
+            <div className="flex gap-4 mt-2">
+               <a href="#" className="h-10 w-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#800020] hover:text-white hover:border-[#800020] transition-all">
+                  <Instagram size={18} />
                </a>
-            ))}
-         </div>
-
-         {/* Contact - Spans 2 columns on Mobile to prevent text wrapping */}
-         <div className="flex flex-col gap-3 col-span-2 md:col-span-1">
-            <h4 className="font-mono text-[10px] text-[#D4E821] uppercase tracking-widest mb-1 md:mb-2">Comms</h4>
-            <a href="mailto:hello@mographics.store" className="text-sm font-bold text-white hover:text-[#D4E821] transition-colors w-fit py-1">
-               hello@mographics.store
-            </a>
-            <a href="tel:+919692664009" className="text-sm text-gray-400 hover:text-white transition-colors w-fit py-1">
-               +91 96926 64009
-            </a>
-            <div className="mt-2 md:mt-4 flex gap-6">
-               <a href="/privacy" className="text-[10px] text-gray-600 hover:text-gray-400 uppercase py-2">Privacy</a>
-               <a href="/terms" className="text-[10px] text-gray-600 hover:text-gray-400 uppercase py-2">Terms</a>
+               <a href="#" className="h-10 w-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#800020] hover:text-white hover:border-[#800020] transition-all">
+                  <Facebook size={18} />
+               </a>
+               <a href="#" className="h-10 w-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#800020] hover:text-white hover:border-[#800020] transition-all">
+                  <Twitter size={18} />
+               </a>
             </div>
          </div>
 
       </div>
 
       {/* === 3. BOTTOM BAR === */}
-      <div className="border-t border-white/10 bg-[#020202]">
-         <div className="max-w-7xl mx-auto px-6 py-6 md:py-0 md:h-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
+      <div className="border-t border-gray-200 bg-gray-50">
+         <div className="max-w-7xl mx-auto px-6 py-6 md:py-4 flex flex-col md:flex-row items-center justify-between gap-4">
             
-            <div className="flex items-center gap-3">
-               <span className="w-1.5 h-1.5 bg-[#D4E821] rounded-full animate-pulse"></span>
-               <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-                  Bhubaneswar: {time} IST
+            {/* Live Time / Location */}
+            <div className="flex items-center gap-2 text-gray-500">
+               <MapPin size={14} className="text-[#800020]" />
+               <span className="text-xs font-medium tracking-wide">
+                 India | {time}
                </span>
             </div>
 
+            {/* Copyright */}
+            <div className="text-xs text-gray-500 text-center">
+               &copy; {new Date().getFullYear()} House of Mahalaxmi. All rights reserved.
+            </div>
+
+            {/* Back to Top */}
             <button 
                onClick={scrollToTop}
-               className="flex items-center gap-2 text-[10px] font-mono text-gray-500 uppercase tracking-widest hover:text-[#D4E821] transition-colors group self-start md:self-auto"
+               className="flex items-center gap-1.5 text-xs font-bold text-gray-600 uppercase tracking-widest hover:text-[#800020] transition-colors group"
             >
-               Return to Top <ArrowUp size={12} className="group-hover:-translate-y-1 transition-transform" />
+               Top <ArrowUp size={14} className="group-hover:-translate-y-1 transition-transform" />
             </button>
 
          </div>
       </div>
 
+      {/* Inline CSS for Marquee */}
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
     </footer>
   );
 }

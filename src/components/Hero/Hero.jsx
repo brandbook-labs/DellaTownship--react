@@ -1,97 +1,73 @@
 import React from 'react';
 import { ShoppingBag, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const Hero = () => {
+const MahalaxmiHero = () => {
   return (
-    <section className="bg-[#FAF8F5] py-12 lg:py-24 overflow-hidden font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
-          
-          {/* --- LEFT SIDE: TEXT CONTENT --- */}
-          <div className="w-full lg:w-1/2 flex flex-col justify-center text-center lg:text-left">
-            
-            {/* Eyebrow Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#800020]/10 text-[#800020] text-sm font-medium mb-6 w-fit mx-auto lg:mx-0">
-              <span className="w-2 h-2 rounded-full bg-[#800020] animate-pulse"></span>
-              New Festive Collection
-            </div>
-            
-            {/* Main Heading */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-gray-900 leading-[1.15] mb-6">
-              Timeless Elegance, <br className="hidden lg:block" />
-              <span className="text-[#800020]">Woven for You.</span>
-            </h1>
-            
-            {/* Subtitle */}
-            <p className="text-lg text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Discover House of Mahalaxmi's exclusive range of handcrafted silk sarees, bridal lehengas, and premium ethnic wear designed for every celebration.
-            </p>
-            
-            {/* Call to Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-              <a 
-                href="/shop" 
-                className="flex items-center justify-center gap-2 bg-[#800020] text-white px-8 py-4 rounded-md font-medium hover:bg-[#600018] transition-colors w-full sm:w-auto shadow-md"
-              >
-                <ShoppingBag size={20} />
-                Shop Now
-              </a>
-              <a 
-                href="/collections" 
-                className="flex items-center justify-center gap-2 bg-transparent text-gray-900 border-2 border-gray-200 px-8 py-4 rounded-md font-medium hover:border-[#800020] hover:text-[#800020] transition-colors w-full sm:w-auto"
-              >
-                View Collections
-                <ArrowRight size={20} />
-              </a>
-            </div>
-            
-            {/* Simple Trust Indicators */}
-            <div className="mt-10 pt-8 border-t border-gray-200 flex items-center justify-center lg:justify-start gap-8">
-              <div>
-                <p className="text-2xl font-bold text-gray-900">10k+</p>
-                <p className="text-sm text-gray-500 uppercase tracking-wide mt-1">Happy Customers</p>
-              </div>
-              <div className="w-px h-10 bg-gray-300"></div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900">100%</p>
-                <p className="text-sm text-gray-500 uppercase tracking-wide mt-1">Authentic Silk</p>
-              </div>
-            </div>
+    <section 
+      className="relative h-screen min-h-[600px] w-full bg-cover bg-center font-sans flex items-center justify-center" 
+      style={{ backgroundImage: "url('https://img.freepik.com/premium-photo/hindu-goddess-durga-generated-by-ai_674037-445.jpg?uid=R169025813&ga=GA1.1.744688816.1759506239&semt=ais_hybrid&w=740&q=80')" }}
+    >
+      {/* --- BACKGROUND OVERLAY: DARK RED GRADIENT --- */}
+      {/* Blends from dark at the top (for navbar readability) into your maroon brand color */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-[#37000E]/60 to-[#800020]/90 z-0"></div>
 
-          </div>
-
-          {/* --- RIGHT SIDE: IMAGE --- */}
-          <div className="w-full lg:w-1/2 relative flex justify-center lg:justify-end mt-8 lg:mt-0">
-            
-            {/* Decorative background blob/shadow */}
-            <div className="absolute top-4 right-4 lg:right-12 w-[90%] sm:w-[75%] h-full bg-[#D4AF37]/20 rounded-t-[140px] rounded-b-2xl -z-10"></div>
-            
-            {/* Main Image with Arch Shape */}
-            <div className="relative w-[90%] sm:w-[75%] aspect-[3/4] lg:mr-8 overflow-hidden rounded-t-[140px] rounded-b-2xl border-4 border-white shadow-xl">
-              <img 
-                src="https://images.unsplash.com/photo-1610030469983-98e550d615e1?q=80&w=1000&auto=format&fit=crop" 
-                alt="Beautiful traditional Indian saree" 
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
-              />
-            </div>
-            
-            {/* Small Floating "Best Seller" Card */}
-            <div className="absolute bottom-8 left-0 lg:left-4 bg-white p-4 rounded-xl shadow-xl flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#FAF8F5] rounded-full flex items-center justify-center border border-gray-100">
-                <span className="text-xl">✨</span>
-              </div>
-              <div>
-                <p className="text-sm font-bold text-gray-900">Best Seller</p>
-                <p className="text-xs text-gray-500">Kanjeevaram Silk</p>
-              </div>
-            </div>
-
-          </div>
-
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center text-center mt-12 md:mt-16">
+        
+        {/* Eyebrow Badge */}
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium mb-8 shadow-lg">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D4AF37] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D4AF37]"></span>
+          </span>
+          Auspicious Festive Collection
         </div>
+        
+        {/* Main Heading */}
+        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white leading-tight mb-6 max-w-4xl drop-shadow-md">
+          Timeless Elegance, <br className="hidden sm:block" />
+          <span className="text-[#D4AF37]">Woven for You.</span>
+        </h1>
+        
+        {/* Subtitle */}
+        <p className="text-lg md:text-xl text-gray-100 mb-10 max-w-2xl leading-relaxed drop-shadow">
+          Discover House of Mahalaxmi's exclusive range of handcrafted silk sarees, bridal lehengas, and premium ethnic wear designed for every celebration.
+        </p>
+        
+        {/* Call to Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+          <Link 
+            to="/shop" 
+            className="flex items-center justify-center gap-2 bg-[#D4AF37] text-gray-900 px-8 py-4 rounded-md font-bold uppercase tracking-wider hover:bg-white transition-colors w-full sm:w-auto shadow-xl"
+          >
+            <ShoppingBag size={20} />
+            Shop Now
+          </Link>
+          <Link 
+            to="/collections" 
+            className="flex items-center justify-center gap-2 bg-transparent text-white border-2 border-white/70 px-8 py-4 rounded-md font-bold uppercase tracking-wider hover:border-white hover:bg-white/10 transition-colors w-full sm:w-auto backdrop-blur-sm"
+          >
+            View Collections
+            <ArrowRight size={20} />
+          </Link>
+        </div>
+        
+        {/* Trust Indicators */}
+        <div className="mt-16 pt-8 border-t border-white/20 flex flex-wrap items-center justify-center gap-8 md:gap-16 w-full max-w-2xl">
+          <div className="text-center">
+            <p className="text-3xl font-serif font-bold text-[#D4AF37]">10k+</p>
+            <p className="text-xs text-gray-200 uppercase tracking-widest mt-1">Happy Customers</p>
+          </div>
+          <div className="hidden sm:block w-px h-12 bg-white/20"></div>
+          <div className="text-center">
+            <p className="text-3xl font-serif font-bold text-[#D4AF37]">100%</p>
+            <p className="text-xs text-gray-200 uppercase tracking-widest mt-1">Authentic Silk</p>
+          </div>
+        </div>
+
       </div>
     </section>
   );
 };
 
-export default Hero;
+export default MahalaxmiHero;

@@ -1,16 +1,10 @@
 import React from 'react'
-import { About, CarbonStats, Card, Contact, Hero, Partnerships, Services, Subscriber, SustainableEnergy, Testimonials } from '../components'
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import AgencyHero from '../components/Hero/Hero';
-
-import ServiceScroll from '../components/Common/Services';
-import Manifesto from '../components/Common/Manifesto';
-import MarqueeSection from '../components/Common/Maqueer';
-import PartnerGrid from '../components/Partnerships/Partnerships';
-
-import PopularProducts from '../components/Products/PopularItems';
-import GoogleReviews from '../components/Common/CustomerReviews';
+import MahalaxmiHero from '../components/Hero/Hero';
+import ProductShowcase from '../components/Products/PopularItems';
+import MahalaxmiCategories from '../components/Common/Categories';
+import ShopByDepartment from '../components/Common/CategoriesMenWomen';
 
 function Home() {
   const { hash } = useLocation();
@@ -28,13 +22,12 @@ function Home() {
   }, [hash]);
   return (
     <>
-      <AgencyHero />
-      <PopularProducts />
-      <ServiceScroll />
-      <PartnerGrid />
-      <GoogleReviews />
-      {/* <MarqueeSection /> */}
-      <Manifesto />
+      <MahalaxmiHero />
+      <ShopByDepartment />
+      <MahalaxmiCategories />
+      <ProductShowcase />
+      
+
    
     </>
   )

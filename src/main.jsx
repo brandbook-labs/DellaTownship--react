@@ -8,31 +8,48 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+
+// --- LAYOUT & MAIN PAGES ---
 import Layout from "./Layout";
 import Home from "./pages/Home";
 import ContactPage from "./components/Contact/Contact";
 import ProductDetails from "./components/Products/ProductDetails";
-import ProductCatalog from "./components/Products/ProductList";
-import Contact from "./components/Contact/Contact";
 import CartPage from "./components/Products/cart";
 import CheckoutPage from "./components/Products/checkout";
 import SuccessPage from "./components/Products/PurchaseSuccess";
-import ServicesPage from "./components/Services/Services";
-import PortfolioPage from "./components/Works/WorksPage";
+import WomensCollection from "./pages/Women/WomensCollection";
+import MensCollection from "./pages/Men/MensCollection";
+import KidsCollection from "./pages/Kids/KidsCollection";
+import FestiveCollection from "./pages/collections/FestiveCollection";
+import WeddingCollection from "./pages/collections/WeddingCollection";
+import CasualCollection from "./pages/collections/CasualCollection";
+import AccessoriesCollection from "./pages/collections/Accessories";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />}>
+      {/* Main Pages */}
       <Route path="" element={<Home />} />
       <Route path="/contact-us" element={<ContactPage />} />
-      <Route path="/product-details" element={<ProductDetails />} />
-      <Route path="/store" element={<ProductCatalog />} />
-      <Route path="/contact" element={<Contact />} />
+      
+      {/* E-Commerce Core */}
+      {/* Notice the ":id" here. This makes it a dynamic route. */}
+      <Route path="/product/:id" element={<ProductDetails />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/success" element={<SuccessPage />} />
-      <Route path="/services" element={<ServicesPage />} />
-      <Route path="/works" element={<PortfolioPage />} />
+
+      {/* Main Categories */}
+      <Route path="/women" element={<WomensCollection />} />
+      <Route path="/men" element={<MensCollection />} />
+      <Route path="/kids" element={<KidsCollection />} />
+
+      {/* Sub-Collections */}
+      <Route path="/collections/festive" element={<FestiveCollection />} />
+      <Route path="/collections/wedding" element={<WeddingCollection />} />
+      <Route path="/collections/casuals" element={<CasualCollection />} />
+      <Route path="/collections/accessories" element={<AccessoriesCollection />} />
+      
     </Route>
   )
 );
@@ -40,8 +57,6 @@ const router = createBrowserRouter(
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <HelmetProvider>
-      {" "}
-      {/* <--- WRAP APP HERE */}
       <RouterProvider router={router} />
     </HelmetProvider>
   </StrictMode>
