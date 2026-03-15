@@ -1,10 +1,11 @@
 import React from 'react'
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import MahalaxmiHero from '../components/Hero/Hero';
 import ProductShowcase from '../components/Products/PopularItems';
-import MahalaxmiCategories from '../components/Common/Categories';
-import ShopByDepartment from '../components/Common/CategoriesMenWomen';
+import ThemedTownships from '../components/Common/Categories';
+import FounderVision from '../components/Common/AboutJimmy';
+import DellaAhmedabadPartners from '../components/Common/AhmedabadBigPartners';
+import DellaHero from '../components/Hero/Hero';
 
 function Home() {
   const { hash } = useLocation();
@@ -22,9 +23,10 @@ function Home() {
   }, [hash]);
   return (
     <>
-      <MahalaxmiHero />
-      <ShopByDepartment />
-      <MahalaxmiCategories />
+      <DellaHero />
+      <ThemedTownships />
+      <DellaAhmedabadPartners />
+      <FounderVision/>
       <ProductShowcase />
       
 

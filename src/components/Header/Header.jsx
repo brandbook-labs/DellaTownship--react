@@ -1,20 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ShoppingBag, Search, Menu, X, ChevronDown, ArrowRight } from 'lucide-react';
+import { Menu, X, ChevronDown, Instagram, Facebook, Linkedin } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 const Navbar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Refs for Animation
+  const headerRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const mobileLinkRefs = useRef([]);
-  const searchInputRef = useRef(null);
-  const searchContainerRef = useRef(null);
 
-  // Toggle Body Scroll
+  // Handle Scroll to hide Top Strip
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Toggle Body Scroll for Mobile Menu
   useEffect(() => {
     if (isMobileOpen) {
       document.body.style.overflow = 'hidden';
@@ -23,40 +36,39 @@ const Navbar = () => {
     }
   }, [isMobileOpen]);
 
-  // --- GSAP ANIMATIONS ---
+  // GSAP Animations
   useGSAP(() => {
+    // 1. Initial Loading Animation
+    gsap.from(headerRef.current, {
+      y: -100,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+    });
+
+    // 2. Mobile Menu Animation
     if (isMobileOpen) {
       const tl = gsap.timeline();
-      
       tl.to(mobileMenuRef.current, {
         x: '0%',
-        duration: 0.5,
-        ease: 'power3.out',
+        duration: 0.6,
+        ease: 'expo.out',
       })
       .fromTo(mobileLinkRefs.current, 
-        { y: 50, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.4, stagger: 0.1, ease: 'power2.out' },
-        "-=0.2"
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out' },
+        "-=0.4"
       );
     } else {
       gsap.to(mobileMenuRef.current, {
         x: '100%',
-        duration: 0.4,
-        ease: 'power3.in',
+        duration: 0.5,
+        ease: 'expo.inOut',
       });
     }
   }, [isMobileOpen]);
 
-  useGSAP(() => {
-    if (isSearchOpen) {
-      gsap.fromTo(searchContainerRef.current,
-        { y: -20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }
-      );
-      setTimeout(() => searchInputRef.current?.focus(), 100);
-    }
-  }, [isSearchOpen]);
-
+  // Helper to collect refs for staggering
   const addToRefs = (el) => {
     if (el && !mobileLinkRefs.current.includes(el)) {
       mobileLinkRefs.current.push(el);
@@ -64,165 +76,130 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white text-gray-900 border-b border-gray-200 font-sans shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          
-          {/* --- UPGRADED LOGO SECTION --- */}
-          <a href="/" className="flex-shrink-0 flex items-center gap-3 z-50 group">
-             {/* <img 
-               src="https://jivan.website/jivan.png" 
-               alt="House of Mahalaxmi Logo" 
-               className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105" 
-             /> */}
-             <div className="flex flex-col justify-center">
-               <span className="text-[9px] sm:text-[10px] tracking-[0.35em] uppercase text-gray-500 font-medium leading-none mb-1 ml-0.5">
-                 House of
-               </span>
-               <span className="text-xl sm:text-2xl font-serif font-bold tracking-wide text-gray-900 leading-none">
-                 MAHALAXMI<span className="text-[#800020]">.</span>
-               </span>
-             </div>
-          </a>
-
-          {/* --- DESKTOP NAVIGATION --- */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="/" className="hover:text-[#800020] transition-colors font-medium">Home</a>
-            <a href="/women" className="hover:text-[#800020] transition-colors font-medium">Women</a>
-            <a href="/men" className="hover:text-[#800020] transition-colors font-medium">Men</a>
-            <a href="/kids" className="hover:text-[#800020] transition-colors font-medium">Kids</a>
-        
-            {/* Collections Dropdown */}
-            <div 
-              className="relative group h-20 flex items-center"
-              onMouseEnter={() => setIsServicesOpen(true)}
-              onMouseLeave={() => setIsServicesOpen(false)}
-            >
-              <button className="flex items-center gap-1 hover:text-[#800020] transition-colors font-medium focus:outline-none">
-                Collections <ChevronDown size={16} />
-              </button>
-
-              <div className={`absolute top-full left-1/2 -translate-x-1/2 w-72 bg-white border border-gray-100 rounded-lg shadow-xl p-2 transition-all duration-200 origin-top ${isServicesOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
-                <div className="flex flex-col">
-                  {[
-                    { title: "Festive Wear", sub: "Sarees, Lehengas & Sets", href: "/collections/festive" },
-                    { title: "Wedding Collection", sub: "Bridal & Groom Elegance", href: "/collections/wedding" },
-                    { title: "Everyday Casuals", sub: "Comfortable & Stylish", href: "/collections/casuals" },
-                    { title: "Accessories", sub: "Jewelry, Bags & Footwear", href: "/collections/accessories" }
-                  ].map((item, idx) => (
-                    <a key={idx} href={item.href} className="block px-4 py-3 rounded-md hover:bg-gray-50 hover:text-[#800020] transition-colors group/item">
-                      <span className="block text-sm font-semibold group-hover/item:translate-x-1 transition-transform">{item.title}</span>
-                      <span className="block text-xs text-gray-500 mt-0.5">{item.sub}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
+    <header ref={headerRef} className="fixed top-0 z-50 w-full">
+      {/* --- TIER 1: TOP CORPORATE STRIP (Hides on Scroll) --- */}
+      <div 
+        className={`hidden md:flex w-full bg-[#050505] border-b border-white/10 transition-all duration-500 ease-in-out overflow-hidden ${
+          isScrolled ? 'h-0 opacity-0' : 'h-[36px] opacity-100'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-between items-center text-[10px] tracking-[0.25em] uppercase font-semibold text-gray-500">
+          <div className="flex items-center gap-6">
+            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-300"><Instagram size={13} /></a>
+            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-300"><Facebook size={13} /></a>
+            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-300"><Linkedin size={13} /></a>
           </div>
-
-          {/* --- RIGHT ACTIONS --- */}
-          <div className="flex items-center gap-6 z-50">
-            <button 
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className={`transition-colors ${isSearchOpen ? 'text-[#800020]' : 'text-gray-700 hover:text-black'}`}
-            >
-              {isSearchOpen ? <X size={22} /> : <Search size={22} />}
-            </button>
-
-            <a href="/cart" className="relative text-gray-700 hover:text-black transition-colors group">
-              <ShoppingBag size={22} />
-              <span className="absolute -top-2 -right-2 bg-[#800020] text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">
-                3
-              </span>
-            </a>
-            
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center">
-              <button 
-                onClick={() => setIsMobileOpen(true)}
-                className="text-gray-700 hover:text-black p-2"
-              >
-                <Menu size={24} />
-              </button>
-            </div>
+          <div className="flex items-center gap-8">
+            <a href="/about" className="hover:text-[#D4AF37] transition-colors duration-300">About Us</a>
+            <a href="/investors" className="hover:text-[#D4AF37] transition-colors duration-300">Investors</a>
+            <a href="/foundation" className="hover:text-[#D4AF37] transition-colors duration-300">The Laugh Foundation</a>
+            <a href="/press" className="hover:text-[#D4AF37] transition-colors duration-300">Press</a>
           </div>
         </div>
       </div>
 
-      {/* --- SEARCH OVERLAY --- */}
-      {isSearchOpen && (
-        <div 
-            ref={searchContainerRef}
-            className="absolute top-20 left-0 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 p-6 shadow-xl z-40"
-        >
-            <div className="max-w-4xl mx-auto relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={24} />
-                <input 
-                    ref={searchInputRef}
-                    type="text" 
-                    placeholder="Search for sarees, dresses, kurtas..." 
-                    className="w-full bg-gray-50 border border-gray-300 rounded-full py-4 pl-14 pr-6 text-gray-900 text-lg placeholder-gray-400 focus:outline-none focus:border-[#800020] focus:ring-1 focus:ring-[#800020] transition-colors"
-                />
+      {/* --- TIER 2: PRIMARY NAVBAR --- */}
+      <nav className={`w-full transition-all duration-500 ${isScrolled ? 'bg-[#0a0a0a]/95 backdrop-blur-lg shadow-2xl' : 'bg-[#0a0a0a]'} text-white border-b border-white/5 font-sans`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            
+            {/* Logo Left */}
+            <a href="/" className="flex-shrink-0 flex items-center gap-3 z-50 group">
+               <div className="flex flex-col justify-center">
+                 <span className="text-[9px] sm:text-[10px] tracking-[0.4em] uppercase text-gray-500 font-medium leading-none mb-1 ml-0.5 transition-colors group-hover:text-gray-400">
+                   Ahmedawad International City
+                 </span>
+                 <span className="text-xl sm:text-2xl font-serif font-bold tracking-widest text-white leading-none">
+                   DELLA<span className="text-[#D4AF37]">.</span>
+                 </span>
+               </div>
+            </a>
+
+            {/* Nav & Action Right */}
+            <div className="hidden md:flex items-center gap-10">
+              <div className="flex items-center space-x-10 text-sm font-medium tracking-wide text-gray-300">
+                <a href="/" className="hover:text-[#D4AF37] transition-colors duration-300">Home</a>
+                <a href="/vision" className="hover:text-[#D4AF37] transition-colors duration-300">The Vision</a>
+                <a href="/lifestyle" className="hover:text-[#D4AF37] transition-colors duration-300">Lifestyle</a>
+                
+                {/* Dropdown */}
+                <div 
+                  className="relative group h-20 flex items-center"
+                  onMouseEnter={() => setIsServicesOpen(true)}
+                  onMouseLeave={() => setIsServicesOpen(false)}
+                >
+                  <button className="flex items-center gap-1.5 hover:text-[#D4AF37] transition-colors duration-300 focus:outline-none">
+                    Properties <ChevronDown size={14} className={`transition-transform duration-300 ${isServicesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <div className={`absolute top-[80px] right-0 w-64 bg-[#111111] border border-white/10 rounded-lg shadow-2xl p-2 transition-all duration-300 origin-top-right ${isServicesOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
+                    <div className="flex flex-col">
+                      <a href="#" className="px-4 py-3 rounded-md hover:bg-[#1a1a1a] hover:text-[#D4AF37] text-sm font-medium transition-colors">Luxury Villas</a>
+                      <a href="#" className="px-4 py-3 rounded-md hover:bg-[#1a1a1a] hover:text-[#D4AF37] text-sm font-medium transition-colors">Premium Apartments</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Premium CTA Button */}
+              <button className="px-7 py-3 bg-transparent border border-[#D4AF37] text-[#D4AF37] text-[11px] font-bold uppercase tracking-[0.2em] rounded hover:bg-[#D4AF37] hover:text-black transition-all duration-500">
+                Get In Touch
+              </button>
             </div>
+
+            {/* Mobile Toggle */}
+            <div className="md:hidden flex items-center">
+              <button onClick={() => setIsMobileOpen(true)} className="text-white p-2 hover:text-[#D4AF37] transition-colors">
+                <Menu size={28} strokeWidth={1.5} />
+              </button>
+            </div>
+          </div>
         </div>
-      )}
+      </nav>
+
+      
 
       {/* --- MOBILE FULL SCREEN MENU --- */}
       <div 
         ref={mobileMenuRef}
-        className="fixed inset-0 z-[60] bg-white/95 backdrop-blur-xl h-[100dvh] w-full transform translate-x-full md:hidden flex flex-col"
-        style={{ willChange: 'transform' }}
+        className="fixed inset-0 z-[60] bg-[#0a0a0a]/95 backdrop-blur-xl h-screen w-full transform translate-x-full md:hidden flex flex-col"
       >
-        <div className="h-20 flex items-center justify-end px-4 border-b border-gray-200 bg-white/50">
-           <button 
-                onClick={() => setIsMobileOpen(false)}
-                className="p-2 text-gray-900 hover:text-[#800020] transition-colors"
-           >
-               <X size={28} />
+        <div className="h-20 flex items-center justify-end px-4 border-b border-white/10">
+           <button onClick={() => setIsMobileOpen(false)} className="p-2 text-gray-400 hover:text-white transition-colors">
+             <X size={32} strokeWidth={1.5} />
            </button>
         </div>
-
-        <div className="flex-1 overflow-y-auto p-6 flex flex-col justify-center">
+        
+        <div className="flex-1 overflow-y-auto p-8 space-y-12 flex flex-col justify-center">
           <div className="space-y-6">
-            <div className="space-y-4">
-              <a ref={addToRefs} href="/" className="block text-4xl font-bold text-gray-900 hover:text-[#800020] transition-colors">Home</a>
-              <a ref={addToRefs} href="/new-arrivals" className="block text-4xl font-bold text-gray-900 hover:text-[#800020] transition-colors">New Arrivals</a>
-              <a ref={addToRefs} href="/women" className="block text-4xl font-bold text-gray-900 hover:text-[#800020] transition-colors">Women</a>
-              <a ref={addToRefs} href="/men" className="block text-4xl font-bold text-gray-900 hover:text-[#800020] transition-colors">Men</a>
-            </div>
-
-            <div className="border-t border-gray-200 my-6 w-20"></div>
-
-            <div className="space-y-3">
-               <p ref={addToRefs} className="text-[#800020] font-mono text-sm uppercase tracking-widest mb-4">Shop By Collection</p>
-               
-               {[
-                 { name: "Festive Wear", href: "/collections/festive" },
-                 { name: "Wedding Collection", href: "/collections/wedding" },
-                 { name: "Everyday Casuals", href: "/collections/casuals" },
-                 { name: "Accessories", href: "/collections/accessories" },
-               ].map((service, i) => (
-                  <a 
-                    key={i} 
-                    ref={addToRefs} 
-                    href={service.href} 
-                    className="flex items-center justify-between text-xl text-gray-600 hover:text-gray-900 group py-2 border-b border-gray-100"
-                  >
-                    {service.name}
-                    <ArrowRight size={16} className="opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#800020]" />
-                  </a>
-               ))}
-            </div>
+            {["Home", "The Vision", "Lifestyle"].map((item, i) => (
+               <div key={`main-${i}`} className="overflow-hidden">
+                 <a ref={addToRefs} href={`/${item.toLowerCase().replace(' ', '-')}`} className="block text-4xl font-serif font-light text-white hover:text-[#D4AF37] transition-colors">
+                   {item}
+                 </a>
+               </div>
+            ))}
+          </div>
+          
+          <div className="border-t border-white/10 w-16"></div>
+          
+          <div className="space-y-5">
+             {["Intro", "Motor Racing", "Golf", "Design", "Wellness"].map((item, i) => (
+               <div key={`sub-${i}`} className="overflow-hidden">
+                 <a ref={addToRefs} href={`#${item.toLowerCase().replace(' ', '-')}`} className="block text-sm text-gray-400 uppercase tracking-[0.2em] hover:text-white transition-colors">
+                   {item}
+                 </a>
+               </div>
+             ))}
           </div>
         </div>
-        
-        <div className="p-6 bg-white border-t border-gray-200">
-            <button className="w-full bg-gray-900 text-white font-bold py-4 rounded-lg hover:bg-[#800020] transition-colors shadow-md">
-                View All Products
+
+        <div className="p-8 border-t border-white/10">
+            <button className="w-full bg-[#D4AF37] text-black font-bold py-4 rounded uppercase tracking-[0.2em] text-xs hover:bg-white transition-colors duration-300">
+              Get In Touch
             </button>
         </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
