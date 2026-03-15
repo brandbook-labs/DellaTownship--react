@@ -1,11 +1,17 @@
 import React from 'react'
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import ProductShowcase from '../components/Products/PopularItems';
 import ThemedTownships from '../components/Common/Categories';
 import FounderVision from '../components/Common/AboutJimmy';
 import DellaAhmedabadPartners from '../components/Common/AhmedabadBigPartners';
 import DellaHero from '../components/Hero/Hero';
+import LeadWizard from '../components/Common/LeadWizard';
+import ProjectIntro from '../components/Common/ProjectIntro';
+import RacingDistrictSection from '../components/Common/DellaMonteCarloRacing';
+import GolfDistrictSection from '../components/Common/GolfDistrictSection';
+import DesignDistrictSection from '../components/Common/DesignDistrictSection';
+import WellnessDistrictSection from '../components/Common/EuropeanWellness';
+import CinematicGrain from '../components/Common/CinematicGrain';
 
 function Home() {
   const { hash } = useLocation();
@@ -24,10 +30,16 @@ function Home() {
   return (
     <>
       <DellaHero />
-      <ThemedTownships />
+      <ProjectIntro />
+      <RacingDistrictSection />
+      <GolfDistrictSection />
+      <DesignDistrictSection/>
+      <WellnessDistrictSection/>
+      {/* <ThemedTownships /> */}
+      {/* <FounderVision/> */}
       <DellaAhmedabadPartners />
-      <FounderVision/>
-      <ProductShowcase />
+      <LeadWizard />
+      <CinematicGrain />
       
 
    

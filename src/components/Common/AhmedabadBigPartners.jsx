@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowRight } from 'lucide-react';
 
 const corePartners = [
   {
@@ -31,17 +32,38 @@ const corePartners = [
   }
 ];
 
+// Updated to an array of objects to optically balance the different logo shapes
 const lifestyleBrands = [
-  "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/forbes-logo.webp",
-  "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/vouge-lounge-logo.webp",
-  "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/architect-digest-logo.webp",
-  "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/conde-nast-logo.webp",
-  "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/gq-newyork-logo.webp"
+  {
+    src: "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/forbes-logo.webp",
+    alt: "Forbes",
+    classes: "h-5 md:h-7 lg:h-8" // Standard horizontal
+  },
+  {
+    src: "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/vouge-lounge-logo.webp",
+    alt: "Vogue Lounge",
+    classes: "h-8 md:h-10 lg:h-12" // Increased height to match weight
+  },
+  {
+    src: "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/architect-digest-logo.webp",
+    alt: "Architectural Digest",
+    classes: "h-14 md:h-16 lg:h-20" // Massively increased height because it's a tall/square logo
+  },
+  {
+    src: "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/conde-nast-logo.webp",
+    alt: "Conde Nast",
+    classes: "h-5 md:h-6 lg:h-7" // Standard horizontal
+  },
+  {
+    src: "https://cdn.dellatownships.com/images/della-international-ahmedabad/brands-collabs/brands/gq-newyork-logo.webp",
+    alt: "GQ",
+    classes: "h-8 md:h-10 lg:h-12" // Slightly taller
+  }
 ];
 
 const DellaAhmedabadPartners = () => {
   return (
-    <section className="bg-[#050505] py-24 border-y border-white/5 font-sans relative overflow-hidden">
+    <section className="py-32 font-sans relative">
       
       {/* Background ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#D4AF37]/[0.03] blur-[120px] pointer-events-none rounded-full"></div>
@@ -49,7 +71,7 @@ const DellaAhmedabadPartners = () => {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         {/* --- 1. HEADER SECTION --- */}
-        <div className="text-center max-w-4xl mx-auto mb-20">
+        <div className="text-center max-w-4xl mx-auto mb-10">
           <p className="text-[#D4AF37] text-[10px] md:text-xs font-bold uppercase tracking-[0.3em] mb-4">
             Global Partnerships
           </p>
@@ -74,7 +96,7 @@ const DellaAhmedabadPartners = () => {
         </div>
 
         {/* --- 2. CORE VISIONARIES GRID (4 Columns) --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           {corePartners.map((partner) => (
             <div 
               key={partner.id} 
@@ -87,7 +109,7 @@ const DellaAhmedabadPartners = () => {
                 </span>
               </div>
 
-              {/* Middle: Logo (Using brightness-0 invert to make dark logos white) */}
+              {/* Middle: Logo */}
               <div className="flex-1 flex items-center justify-center w-full my-6">
                 <img 
                   src={partner.logo} 
@@ -109,23 +131,34 @@ const DellaAhmedabadPartners = () => {
           ))}
         </div>
 
-        {/* --- 3. LIFESTYLE BRANDS RIBBON (Horizontal Strip) --- */}
+        {/* --- 3. LIFESTYLE BRANDS RIBBON --- */}
         <div className="w-full bg-[#0a0a0a] border border-white/5 py-12 px-8 lg:px-16 flex flex-col items-center">
           <p className="text-[10px] text-[#D4AF37] uppercase tracking-[0.25em] mb-10 text-center font-semibold">
             Luxury Lifestyle Brands
           </p>
           
           <div className="w-full flex flex-wrap justify-center lg:justify-between items-center gap-10 lg:gap-8">
-            {lifestyleBrands.map((logo, index) => (
+            {lifestyleBrands.map((brand, index) => (
               <img 
                 key={index} 
-                src={logo} 
-                alt="Lifestyle Brand" 
-                // Inverting here as well to ensure they show up crisp white on the dark background
-                className="h-6 md:h-8 lg:h-10 w-auto object-contain brightness-0 invert opacity-40 hover:opacity-100 hover:-translate-y-1 transition-all duration-500 cursor-pointer"
+                src={brand.src} 
+                alt={brand.alt} 
+                // Now using the custom classes from the array object to balance the sizes
+                className={`${brand.classes} w-auto object-contain brightness-0 invert opacity-40 hover:opacity-100 hover:-translate-y-1 transition-all duration-500 cursor-pointer`}
               />
             ))}
           </div>
+        </div>
+
+        {/* --- 4. VIEW ALL PARTNERS CTA --- */}
+        <div className="mt-16 flex justify-center">
+          <a 
+            href="/partners" 
+            className="inline-flex items-center gap-4 bg-transparent text-white border border-white/20 px-10 py-4 rounded-sm font-bold uppercase tracking-[0.2em] text-[10px] sm:text-xs hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all duration-500 group"
+          >
+            View All Partners
+            <ArrowRight size={16} className="text-gray-400 group-hover:text-[#D4AF37] group-hover:translate-x-1.5 transition-all duration-300" />
+          </a>
         </div>
 
       </div>

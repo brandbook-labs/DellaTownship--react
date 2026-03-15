@@ -1,154 +1,201 @@
-import React, { useEffect, useState } from 'react';
-import { ArrowUp, Instagram, Facebook, Twitter, ArrowRight, MapPin } from 'lucide-react';
+import React from 'react';
+import { 
+  MapPin, 
+  ArrowRight, 
+  Facebook, 
+  Instagram, 
+  Youtube, 
+  Twitter, 
+  Linkedin,
+  ArrowUpRight
+} from 'lucide-react';
 
-export default function Footer() {
-  const [time, setTime] = useState("");
+export default function LuxuryFooter() {
+  const col1Links = [
+    { name: '12 Townships Pre Launched', href: '#' },
+    { name: 'Operational Townships', href: '#' },
+    { name: 'Della CDDMO', href: '#' },
+    { name: 'About Us', href: '#' },
+    { name: 'Della Foundation', href: '#' },
+    { name: 'GCC Hubs', href: '#' },
+    { name: 'Collaborative Designers', href: '#' },
+  ];
 
-  // Live Time (India)
-  useEffect(() => {
-    const updateTime = () => {
-      setTime(new Date().toLocaleTimeString('en-US', { 
-        hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' 
-      }));
-    };
-    const t = setInterval(updateTime, 1000);
-    updateTime();
-    return () => clearInterval(t);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // E-commerce marquee messages
-  const marqueeMessages = [
-    "FREE SHIPPING ACROSS INDIA",
-    "100% AUTHENTIC HANDLOOM",
-    "NEW FESTIVE COLLECTION",
-    "SECURE CHECKOUT",
-    "EASY RETURNS"
+  const col2Links = [
+    { name: 'Della Design Districts', href: '#' },
+    { name: 'Medical Wellness', href: '#' },
+    { name: 'Press', href: '#' },
+    { name: 'Salutogenic Living', href: '#' },
+    { name: 'Contact Us', href: '#' },
+    { name: 'Privacy Policy', href: '#' },
+    { name: 'Site Map', href: '#' },
   ];
 
   return (
-    <footer className="bg-white text-gray-900 border-t border-gray-200 font-sans overflow-hidden">
+    <footer className="text-white font-sans overflow-hidden relative z-10 pt-10 lg:pt-20">
       
-      {/* === 1. MARQUEE BORDER === */}
-      <div className="relative border-b border-gray-200 py-3 overflow-hidden bg-gray-50">
-        <div className="flex whitespace-nowrap opacity-80" style={{ animation: 'marquee 30s linear infinite' }}>
-           {/* Render multiple times for infinite scroll effect */}
-           {[...Array(4)].map((_, i) => (
-             <div key={i} className="flex items-center">
-                {marqueeMessages.map((msg, idx) => (
-                  <div key={idx} className="flex items-center">
-                    <span className="text-xs font-medium tracking-widest uppercase text-gray-600 px-6">
-                      {msg}
-                    </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#800020]/40"></span>
-                  </div>
+      {/* Massive Background Watermark (Adds Editorial Scale) */}
+      <div className="absolute bottom-[-10%] left-1/2 -translate-x-1/2 text-[20vw] font-serif font-bold text-white/[0.008] pointer-events-none select-none whitespace-nowrap z-0">
+        DELLA
+      </div>
+
+      <div className="max-w-[1600px] mx-auto px-6 lg:px-12 relative z-10">
+        
+        {/* --- MAIN ASYMMETRICAL GRID --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 pb-20">
+          
+          {/* LEFT PANE: Branding, Newsletter & Socials (5 Columns) */}
+          <div className="lg:col-span-5 flex flex-col justify-between animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <div>
+              <h2 className="text-5xl lg:text-7xl font-serif font-light mb-8">
+                DELLA<span className="text-[#C5A059]">.</span>
+              </h2>
+              <p className="text-gray-400 text-sm lg:text-base font-light leading-relaxed max-w-sm mb-12">
+                India's first luxury integrated city. Redefining global living through architecture, wellness, and motorsport.
+              </p>
+            </div>
+
+            {/* Premium Newsletter Input */}
+            <div className="w-full max-w-md mb-12">
+              <h4 className="text-[#C5A059] text-[10px] uppercase tracking-[0.3em] font-bold mb-6">Stay Informed</h4>
+              <div className="relative group">
+                <input 
+                  type="email" 
+                  placeholder="Enter your email address" 
+                  className="w-full bg-transparent border-b border-white/20 text-white text-lg lg:text-xl py-3 pr-12 focus:outline-none focus:border-[#C5A059] transition-colors font-light placeholder-gray-600"
+                />
+                <button className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 group-hover:text-[#C5A059] transition-colors p-2">
+                  <ArrowRight size={24} strokeWidth={1.5} className="transform transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
+            </div>
+
+            {/* Minimalist Socials */}
+            <div>
+              <div className="flex gap-6">
+                {[
+                  { Icon: Instagram, label: 'Instagram' },
+                  { Icon: Facebook, label: 'Facebook' },
+                  { Icon: Linkedin, label: 'LinkedIn' },
+                  { Icon: Youtube, label: 'YouTube' },
+                  { Icon: Twitter, label: 'Twitter' }
+                ].map((social, idx) => (
+                  <a 
+                    key={idx} 
+                    href="#" 
+                    aria-label={social.label}
+                    className="text-gray-500 hover:text-[#C5A059] hover:-translate-y-1 transition-all duration-300"
+                  >
+                    <social.Icon size={20} strokeWidth={1.5} />
+                  </a>
                 ))}
-             </div>
-           ))}
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT PANE: Links and Addresses (7 Columns nested into 3) */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-8 pt-4">
+            
+            {/* Links Column 1 */}
+            <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              <h4 className="text-white text-[10px] uppercase tracking-[0.2em] font-bold mb-8">The Portfolio</h4>
+              <ul className="space-y-4">
+                {col1Links.map((link, idx) => (
+                  <li key={idx}>
+                    <a href={link.href} className="group flex items-center gap-2 w-max text-gray-400 hover:text-[#C5A059] transition-colors">
+                      <span className="text-[11px] uppercase tracking-widest font-medium transition-transform duration-300 group-hover:translate-x-1">
+                        {link.name}
+                      </span>
+                      <ArrowUpRight size={12} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Links Column 2 */}
+            <div className="animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+              <h4 className="text-white text-[10px] uppercase tracking-[0.2em] font-bold mb-8">Corporate</h4>
+              <ul className="space-y-4">
+                {col2Links.map((link, idx) => (
+                  <li key={idx}>
+                    <a href={link.href} className="group flex items-center gap-2 w-max text-gray-400 hover:text-[#C5A059] transition-colors">
+                      <span className="text-[11px] uppercase tracking-widest font-medium transition-transform duration-300 group-hover:translate-x-1">
+                        {link.name}
+                      </span>
+                      <ArrowUpRight size={12} className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Addresses Column */}
+            <div className="flex flex-col space-y-12 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+              
+              {/* HQ */}
+              <div>
+                <h4 className="text-white text-[10px] uppercase tracking-[0.2em] font-bold mb-6">Headquarters</h4>
+                <address className="not-italic text-gray-400 text-xs leading-relaxed font-light mb-4">
+                  Della Tower, Jame Jamshed Road,<br/>
+                  Parsi Colony, Dadar (E),<br/>
+                  Mumbai - 400014, India.
+                </address>
+                <div className="space-y-2">
+                  <a href="tel:180030006177" className="block text-[11px] tracking-widest text-[#C5A059] hover:text-white transition-colors">
+                    1800 3000 6177
+                  </a>
+                  <a href="mailto:info@dellatownships.com" className="block text-[11px] tracking-widest text-[#C5A059] hover:text-white transition-colors">
+                    info@dellatownships.com
+                  </a>
+                </div>
+              </div>
+
+              {/* Regional */}
+              <div>
+                <h4 className="text-white text-[10px] uppercase tracking-[0.2em] font-bold mb-6">Regional Offices</h4>
+                
+                <div className="mb-6 border-l border-white/10 pl-4 hover:border-[#C5A059] transition-colors duration-300">
+                  <p className="text-[10px] text-white uppercase tracking-widest mb-1">Lonavala</p>
+                  <p className="text-gray-400 text-xs font-light leading-relaxed">Kunegaon Lonavala, MH - 410401</p>
+                </div>
+
+                <div className="border-l border-white/10 pl-4 hover:border-[#C5A059] transition-colors duration-300">
+                  <p className="text-[10px] text-white uppercase tracking-widest mb-1">Jaipur</p>
+                  <p className="text-gray-400 text-xs font-light leading-relaxed">Horizon Towers, Malviya Nagar, RJ - 302017</p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
         </div>
-      </div>
 
-      {/* === 2. MAIN GRID === */}
-      <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 grid grid-cols-2 md:grid-cols-12 gap-x-4 gap-y-10 md:gap-8">
-         
-         {/* Branding - Spans wider on larger screens */}
-         <div className="col-span-2 md:col-span-4 flex flex-col justify-start">
-            <a href="/" className="flex flex-col justify-center mb-6 w-fit">
-               <span className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gray-500 font-medium leading-none mb-1 ml-0.5">
-                 House of
-               </span>
-               <span className="text-2xl sm:text-3xl font-serif font-bold tracking-wide text-gray-900 leading-none">
-                 MAHALAXMI<span className="text-[#800020]">.</span>
-               </span>
-            </a>
-            <p className="text-sm text-gray-600 leading-relaxed max-w-sm">
-               Discover timeless elegance woven into every thread. Premium silk sarees, lehengas, and ethnic fashion for the modern woman.
-            </p>
-         </div>
-
-         {/* Shop Links */}
-         <div className="flex flex-col gap-4 col-span-1 md:col-span-2 md:col-start-6">
-            <h4 className="font-serif text-lg font-bold text-gray-900">Shop</h4>
-            <a href="/new-arrivals" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">New Arrivals</a>
-            <a href="/sarees" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Silk Sarees</a>
-            <a href="/festive" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Festive Wear</a>
-            <a href="/accessories" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Accessories</a>
-         </div>
-
-         {/* Support Links */}
-         <div className="flex flex-col gap-4 col-span-1 md:col-span-2">
-            <h4 className="font-serif text-lg font-bold text-gray-900">Support</h4>
-            <a href="/contact" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Contact Us</a>
-            <a href="/faq" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">FAQs</a>
-            <a href="/shipping" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Shipping Policy</a>
-            <a href="/returns" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">Returns & Exchanges</a>
-         </div>
-
-         {/* Contact & Socials */}
-         <div className="flex flex-col gap-4 col-span-2 md:col-span-3">
-            <h4 className="font-serif text-lg font-bold text-gray-900">Get in Touch</h4>
-            
-            <a href="mailto:support@houseofmahalaxmi.com" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit">
-               support@houseofmahalaxmi.com
-            </a>
-            <a href="tel:+919876543210" className="text-sm text-gray-600 hover:text-[#800020] transition-colors w-fit mb-2">
-               +91 98765 43210
-            </a>
-
-            {/* Social Icons */}
-            <div className="flex gap-4 mt-2">
-               <a href="#" className="h-10 w-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#800020] hover:text-white hover:border-[#800020] transition-all">
-                  <Instagram size={18} />
-               </a>
-               <a href="#" className="h-10 w-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#800020] hover:text-white hover:border-[#800020] transition-all">
-                  <Facebook size={18} />
-               </a>
-               <a href="#" className="h-10 w-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#800020] hover:text-white hover:border-[#800020] transition-all">
-                  <Twitter size={18} />
-               </a>
-            </div>
-         </div>
+        {/* --- BOTTOM COPYRIGHT BAR --- */}
+        <div className="border-t border-white/10 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-[9px] uppercase tracking-[0.3em] text-gray-500 font-semibold text-center md:text-left">
+            &copy; {new Date().getFullYear()} DELLA TOWNSHIPS <span className="mx-2 text-white/20">|</span> ALL RIGHTS RESERVED
+          </p>
+          
+          <div className="flex items-center gap-6">
+            <a href="#" className="text-[9px] uppercase tracking-[0.2em] text-gray-500 hover:text-white transition-colors">Terms of Service</a>
+            <a href="#" className="text-[9px] uppercase tracking-[0.2em] text-gray-500 hover:text-white transition-colors">Legal Disclaimer</a>
+          </div>
+        </div>
 
       </div>
 
-      {/* === 3. BOTTOM BAR === */}
-      <div className="border-t border-gray-200 bg-gray-50">
-         <div className="max-w-7xl mx-auto px-6 py-6 md:py-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            
-            {/* Live Time / Location */}
-            <div className="flex items-center gap-2 text-gray-500">
-               <MapPin size={14} className="text-[#800020]" />
-               <span className="text-xs font-medium tracking-wide">
-                 India | {time}
-               </span>
-            </div>
-
-            {/* Copyright */}
-            <div className="text-xs text-gray-500 text-center">
-               &copy; {new Date().getFullYear()} House of Mahalaxmi. All rights reserved.
-            </div>
-
-            {/* Back to Top */}
-            <button 
-               onClick={scrollToTop}
-               className="flex items-center gap-1.5 text-xs font-bold text-gray-600 uppercase tracking-widest hover:text-[#800020] transition-colors group"
-            >
-               Top <ArrowUp size={14} className="group-hover:-translate-y-1 transition-transform" />
-            </button>
-
-         </div>
-      </div>
-
-      {/* Inline CSS for Marquee */}
-      <style>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+      {/* Inline Styles for Entrance Animations */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-      `}</style>
+        .animate-fade-in-up {
+          opacity: 0;
+          animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+      `}} />
     </footer>
   );
 }

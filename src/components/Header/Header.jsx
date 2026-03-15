@@ -1,191 +1,214 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, X, ChevronDown, Instagram, Facebook, Linkedin } from 'lucide-react';
+import { Instagram, Facebook, Linkedin } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 const Navbar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Refs for Animation
-  const headerRef = useRef(null);
+  const headerBgRef = useRef(null);
+  const topStripRef = useRef(null);
+  const logoRef = useRef(null);
+  const navLinksRef = useRef([]);
+  const ctaBtnRef = useRef(null);
   const mobileMenuRef = useRef(null);
   const mobileLinkRefs = useRef([]);
+  
+  navLinksRef.current = [];
+  mobileLinkRefs.current = [];
 
-  // Handle Scroll to hide Top Strip
+  const mainLinks = ['Residential', 'Offices', 'Rental', 'Retail', 'Hospitality'];
+
+  // Handle Scroll for Glassmorphism & Strip Hiding
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Toggle Body Scroll for Mobile Menu
+  // Lock Body Scroll when Mobile Menu is Open
   useEffect(() => {
-    if (isMobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = isMobileOpen ? 'hidden' : 'unset';
   }, [isMobileOpen]);
 
-  // GSAP Animations
+  // Premium GSAP Animations
   useGSAP(() => {
-    // 1. Initial Loading Animation
-    gsap.from(headerRef.current, {
-      y: -100,
-      opacity: 0,
-      duration: 1.2,
-      ease: 'power3.out',
-    });
+    // --- 1. HEAVY ONLOAD ANIMATION ---
+    const tlLoad = gsap.timeline({ delay: 3.8 }); 
+    
+    // Background and top strip drop down
+    tlLoad.fromTo([headerBgRef.current, topStripRef.current], 
+      { y: -100, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.2, ease: 'power4.out', stagger: 0.1 }
+    )
+    // Logo fades up and scales slightly
+    .fromTo(logoRef.current,
+      { y: 20, opacity: 0, scale: 0.95 },
+      { y: 0, opacity: 1, scale: 1, duration: 1, ease: 'power3.out' },
+      "-=0.6"
+    )
+    // Nav links and CTA cascade down smoothly
+    .fromTo([...navLinksRef.current, ctaBtnRef.current],
+      { y: -20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, stagger: 0.08, ease: 'power2.out' },
+      "-=0.8"
+    );
 
-    // 2. Mobile Menu Animation
+    // --- 2. EDITORIAL MOBILE MENU REVEAL ---
     if (isMobileOpen) {
-      const tl = gsap.timeline();
-      tl.to(mobileMenuRef.current, {
-        x: '0%',
-        duration: 0.6,
-        ease: 'expo.out',
+      const tlMobile = gsap.timeline();
+      tlMobile.to(mobileMenuRef.current, {
+        y: '0%', 
+        duration: 0.8,
+        ease: 'power3.inOut',
       })
       .fromTo(mobileLinkRefs.current, 
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: 'power2.out' },
+        { y: 40, opacity: 0, rotationX: -20 }, 
+        { y: 0, opacity: 1, rotationX: 0, duration: 0.6, stagger: 0.05, ease: 'power2.out' },
         "-=0.4"
       );
     } else {
       gsap.to(mobileMenuRef.current, {
-        x: '100%',
-        duration: 0.5,
-        ease: 'expo.inOut',
+        y: '-100%',
+        duration: 0.6,
+        ease: 'power3.inOut',
       });
     }
   }, [isMobileOpen]);
 
-  // Helper to collect refs for staggering
-  const addToRefs = (el) => {
-    if (el && !mobileLinkRefs.current.includes(el)) {
-      mobileLinkRefs.current.push(el);
-    }
+  const addToNavRefs = (el) => {
+    if (el && !navLinksRef.current.includes(el)) navLinksRef.current.push(el);
+  };
+
+  const addToMobileRefs = (el) => {
+    if (el && !mobileLinkRefs.current.includes(el)) mobileLinkRefs.current.push(el);
   };
 
   return (
-    <header ref={headerRef} className="fixed top-0 z-50 w-full">
-      {/* --- TIER 1: TOP CORPORATE STRIP (Hides on Scroll) --- */}
+    <header className="fixed top-0 z-[100] w-full transition-all duration-700">
+      
+      {/* --- TIER 1: THE EXECUTIVE STRIP --- */}
       <div 
-        className={`hidden md:flex w-full bg-[#050505] border-b border-white/10 transition-all duration-500 ease-in-out overflow-hidden ${
-          isScrolled ? 'h-0 opacity-0' : 'h-[36px] opacity-100'
+        ref={topStripRef}
+        className={`hidden lg:flex w-full bg-[#050505] transition-all duration-700 ease-in-out overflow-hidden ${
+          isScrolled ? 'h-0 opacity-0' : 'h-[36px] opacity-100 border-b border-white/5'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-between items-center text-[10px] tracking-[0.25em] uppercase font-semibold text-gray-500">
-          <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-300"><Instagram size={13} /></a>
-            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-300"><Facebook size={13} /></a>
-            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-300"><Linkedin size={13} /></a>
-          </div>
+        <div className="max-w-[1600px] mx-auto px-6 lg:px-12 w-full flex justify-between items-center text-[9px] tracking-[0.3em] uppercase font-semibold text-gray-500">
           <div className="flex items-center gap-8">
-            <a href="/about" className="hover:text-[#D4AF37] transition-colors duration-300">About Us</a>
-            <a href="/investors" className="hover:text-[#D4AF37] transition-colors duration-300">Investors</a>
-            <a href="/foundation" className="hover:text-[#D4AF37] transition-colors duration-300">The Laugh Foundation</a>
-            <a href="/press" className="hover:text-[#D4AF37] transition-colors duration-300">Press</a>
+            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-500 flex items-center gap-2"><Instagram size={12} /></a>
+            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-500 flex items-center gap-2"><Facebook size={12} /></a>
+            <a href="#" className="hover:text-[#D4AF37] transition-colors duration-500 flex items-center gap-2"><Linkedin size={12} /></a>
+          </div>
+          <div className="flex items-center gap-10">
+            <a href="/investors" className="hover:text-white transition-colors duration-500">Investors</a>
+            <a href="/foundation" className="hover:text-white transition-colors duration-500">Della Foundation</a>
+            <a href="/press" className="hover:text-white transition-colors duration-500">Press Area</a>
           </div>
         </div>
       </div>
 
-      {/* --- TIER 2: PRIMARY NAVBAR --- */}
-      <nav className={`w-full transition-all duration-500 ${isScrolled ? 'bg-[#0a0a0a]/95 backdrop-blur-lg shadow-2xl' : 'bg-[#0a0a0a]'} text-white border-b border-white/5 font-sans`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+      {/* --- TIER 2: PRIMARY LUXURY NAVBAR --- */}
+      <nav 
+        ref={headerBgRef}
+        className={`w-full transition-all duration-700 ${
+          isScrolled 
+            ? 'bg-[#050505]/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] border-b border-white/5 py-2' 
+            : 'bg-transparent py-4'
+        }`}
+      >
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-12">
+          <div className="flex items-center justify-between h-16">
             
-            {/* Logo Left */}
-            <a href="/" className="flex-shrink-0 flex items-center gap-3 z-50 group">
+            {/* LOGO: Image + Text Aligned */}
+            <a ref={logoRef} href="/" className="flex-shrink-0 flex items-center gap-4 z-50 group">
+                {/* Brand Logo Image */}
+                <img 
+                  src="https://cdn.dellatownships.com/images/logo/della-townships-logo.webp" 
+                  alt="Della Logo" 
+                  className="h-8 md:h-10 w-auto object-contain filter brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                />
+                
+                {/* Architectural Divider */}
+                <div className="h-8 w-px bg-white/20"></div>
+
+                {/* Brand Text */}
                <div className="flex flex-col justify-center">
-                 <span className="text-[9px] sm:text-[10px] tracking-[0.4em] uppercase text-gray-500 font-medium leading-none mb-1 ml-0.5 transition-colors group-hover:text-gray-400">
-                   Ahmedawad International City
+                 
+                 <span className="text-xl sm:text-2xl font-serif font-light tracking-widest text-white leading-none drop-shadow-lg mb-1 ">
+                   DELLA<span className="text-[#D4AF37] font-bold">.</span>
                  </span>
-                 <span className="text-xl sm:text-2xl font-serif font-bold tracking-widest text-white leading-none">
-                   DELLA<span className="text-[#D4AF37]">.</span>
+                 <span className="text-[7px] sm:text-[8px] tracking-[0.4em] uppercase text-gray-400 font-medium leading-none transition-colors duration-500 group-hover:text-white">
+                   Ahmedabad International City
                  </span>
                </div>
             </a>
 
-            {/* Nav & Action Right */}
-            <div className="hidden md:flex items-center gap-10">
-              <div className="flex items-center space-x-10 text-sm font-medium tracking-wide text-gray-300">
-                <a href="/" className="hover:text-[#D4AF37] transition-colors duration-300">Home</a>
-                <a href="/vision" className="hover:text-[#D4AF37] transition-colors duration-300">The Vision</a>
-                <a href="/lifestyle" className="hover:text-[#D4AF37] transition-colors duration-300">Lifestyle</a>
-                
-                {/* Dropdown */}
-                <div 
-                  className="relative group h-20 flex items-center"
-                  onMouseEnter={() => setIsServicesOpen(true)}
-                  onMouseLeave={() => setIsServicesOpen(false)}
-                >
-                  <button className="flex items-center gap-1.5 hover:text-[#D4AF37] transition-colors duration-300 focus:outline-none">
-                    Properties <ChevronDown size={14} className={`transition-transform duration-300 ${isServicesOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  <div className={`absolute top-[80px] right-0 w-64 bg-[#111111] border border-white/10 rounded-lg shadow-2xl p-2 transition-all duration-300 origin-top-right ${isServicesOpen ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}`}>
-                    <div className="flex flex-col">
-                      <a href="#" className="px-4 py-3 rounded-md hover:bg-[#1a1a1a] hover:text-[#D4AF37] text-sm font-medium transition-colors">Luxury Villas</a>
-                      <a href="#" className="px-4 py-3 rounded-md hover:bg-[#1a1a1a] hover:text-[#D4AF37] text-sm font-medium transition-colors">Premium Apartments</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* LINKS: Perfectly Centered */}
+            <div className="hidden lg:flex flex-1 justify-center items-center gap-6 xl:gap-10 text-[10px] xl:text-[11px] font-medium tracking-[0.2em] uppercase text-gray-300">
+              {mainLinks.map((item) => (
+                <a ref={addToNavRefs} key={item} href={`/${item.toLowerCase()}`} className="relative group py-2">
+                  <span className="group-hover:text-white transition-colors duration-500">{item}</span>
+                  <span className="absolute bottom-0 left-1/2 w-0 h-[1px] bg-[#D4AF37] transform -translate-x-1/2 transition-all duration-500 group-hover:w-full"></span>
+                </a>
+              ))}
+            </div>
 
-              {/* Premium CTA Button */}
-              <button className="px-7 py-3 bg-transparent border border-[#D4AF37] text-[#D4AF37] text-[11px] font-bold uppercase tracking-[0.2em] rounded hover:bg-[#D4AF37] hover:text-black transition-all duration-500">
-                Get In Touch
+            {/* CTA & MOBILE: Right Aligned */}
+            <div className="flex justify-end items-center gap-6 z-[120]">
+              <button ref={ctaBtnRef} className="hidden lg:block relative px-8 py-3 bg-transparent border border-white/20 text-white text-[9px] xl:text-[10px] font-bold uppercase tracking-[0.2em] rounded overflow-hidden group">
+                <span className="relative z-10 group-hover:text-black transition-colors duration-500">Request Invite</span>
+                <div className="absolute inset-0 w-full h-full bg-[#D4AF37] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out z-0"></div>
+              </button>
+
+              {/* SMART HAMBURGER MENU (CSS Morphing) */}
+              <button 
+                onClick={() => setIsMobileOpen(!isMobileOpen)} 
+                className="lg:hidden relative w-10 h-10 flex flex-col justify-center items-end gap-[5px] group focus:outline-none"
+              >
+                <span className={`block h-[1px] bg-white transition-all duration-300 ease-in-out ${isMobileOpen ? 'w-6 rotate-45 translate-y-[6px]' : 'w-7 group-hover:w-6'}`}></span>
+                <span className={`block h-[1px] bg-[#D4AF37] transition-all duration-300 ease-in-out ${isMobileOpen ? 'w-6 opacity-0 translate-x-2' : 'w-5 group-hover:w-6'}`}></span>
+                <span className={`block h-[1px] bg-white transition-all duration-300 ease-in-out ${isMobileOpen ? 'w-6 -rotate-45 -translate-y-[6px]' : 'w-6'}`}></span>
               </button>
             </div>
 
-            {/* Mobile Toggle */}
-            <div className="md:hidden flex items-center">
-              <button onClick={() => setIsMobileOpen(true)} className="text-white p-2 hover:text-[#D4AF37] transition-colors">
-                <Menu size={28} strokeWidth={1.5} />
-              </button>
-            </div>
           </div>
         </div>
       </nav>
 
-      
-
-      {/* --- MOBILE FULL SCREEN MENU --- */}
+      {/* --- EDITORIAL MOBILE MENU --- */}
       <div 
         ref={mobileMenuRef}
-        className="fixed inset-0 z-[60] bg-[#0a0a0a]/95 backdrop-blur-xl h-screen w-full transform translate-x-full md:hidden flex flex-col"
+        className="fixed inset-0 z-[110] bg-[#050505]/95 backdrop-blur-2xl h-[100dvh] w-full transform -translate-y-full lg:hidden flex flex-col"
       >
-        <div className="h-20 flex items-center justify-end px-4 border-b border-white/10">
-           <button onClick={() => setIsMobileOpen(false)} className="p-2 text-gray-400 hover:text-white transition-colors">
-             <X size={32} strokeWidth={1.5} />
-           </button>
+        <div className="h-20 flex items-center px-6 border-b border-white/5 mt-4">
+           <span className="text-2xl font-serif font-light tracking-widest text-white leading-none">
+             DELLA<span className="text-[#D4AF37] font-bold">.</span>
+           </span>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-8 space-y-12 flex flex-col justify-center">
+        <div className="flex-1 overflow-y-auto px-8 py-10 flex flex-col justify-center">
           <div className="space-y-6">
-            {["Home", "The Vision", "Lifestyle"].map((item, i) => (
+            {mainLinks.map((item, i) => (
                <div key={`main-${i}`} className="overflow-hidden">
-                 <a ref={addToRefs} href={`/${item.toLowerCase().replace(' ', '-')}`} className="block text-4xl font-serif font-light text-white hover:text-[#D4AF37] transition-colors">
+                 <a ref={addToMobileRefs} href={`/${item.toLowerCase()}`} className="block text-4xl sm:text-5xl font-serif font-light text-gray-400 hover:text-[#D4AF37] transition-colors duration-500">
                    {item}
                  </a>
                </div>
             ))}
           </div>
           
-          <div className="border-t border-white/10 w-16"></div>
+          <div className="my-10 border-t border-white/10 w-12"></div>
           
-          <div className="space-y-5">
-             {["Intro", "Motor Racing", "Golf", "Design", "Wellness"].map((item, i) => (
+          {/* Sub-links in Mobile */}
+          <div className="grid grid-cols-2 gap-y-6">
+             {["Investors", "Foundation", "Press", "Careers"].map((item, i) => (
                <div key={`sub-${i}`} className="overflow-hidden">
-                 <a ref={addToRefs} href={`#${item.toLowerCase().replace(' ', '-')}`} className="block text-sm text-gray-400 uppercase tracking-[0.2em] hover:text-white transition-colors">
+                 <a ref={addToMobileRefs} href={`#${item.toLowerCase()}`} className="block text-[10px] text-gray-500 uppercase tracking-[0.2em] hover:text-white transition-colors">
                    {item}
                  </a>
                </div>
@@ -193,9 +216,9 @@ const Navbar = () => {
           </div>
         </div>
 
-        <div className="p-8 border-t border-white/10">
-            <button className="w-full bg-[#D4AF37] text-black font-bold py-4 rounded uppercase tracking-[0.2em] text-xs hover:bg-white transition-colors duration-300">
-              Get In Touch
+        <div className="p-6 border-t border-white/5 bg-[#050505]">
+            <button className="w-full bg-[#D4AF37] text-black font-bold py-5 rounded uppercase tracking-[0.2em] text-[10px] hover:bg-white transition-colors duration-500 shadow-[0_0_20px_rgba(212,175,55,0.15)]">
+              Request Private Invite
             </button>
         </div>
       </div>
