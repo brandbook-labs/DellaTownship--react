@@ -7,7 +7,7 @@ import UltraPremiumLoader from "./components/Common/Loader";
 function Layout() {
   return (
     <>
-      {/* <UltraPremiumLoader /> */}
+      <UltraPremiumLoader />
       <DynamicSEO />
       <Header />
       <Outlet />
