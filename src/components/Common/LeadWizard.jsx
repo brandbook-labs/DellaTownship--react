@@ -142,30 +142,30 @@ const LeadWizard = () => {
         title: 'Which lifestyle aligns',
         italicText: 'with your vision?',
         options: [
-          { label: 'Motor Racing District', img: 'https://images.unsplash.com/photo-1541348263662-e06836264b10?auto=format&fit=crop&q=80&w=800' },
-          { label: 'Championship Golf', img: 'https://images.unsplash.com/photo-1587174486073-ae5e5cff23aa?auto=format&fit=crop&q=80&w=800' },
-          { label: 'Design District', img: 'https://images.unsplash.com/photo-1509631179647-0c37cb1100f7?auto=format&fit=crop&q=80&w=800' },
-          { label: 'European Wellness', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800' }
+          { label: 'Motor Racing District', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-monte-carlo-international/motor-sport/popup/della-townships-ahmedabad-monte-carlo-international-motorsport-hero.webp' },
+          { label: 'Championship Golf', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-international-golfcourse/della-townships-ahmedabad-international-golf-course-hero.webp' },
+          { label: 'Design District', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-design-district/residences/design-district-residences-popup-3.webp' },
+          { label: 'European Wellness', img: 'https://cdn.dellatownships.com/images/wellness-nagpur/luxury-meets/rooftop-restaurant-infinity-pool-della-townships-wellness-nagpur.webp' }
         ],
       },
       'Brand Collaborations': {
         title: 'Select your',
         italicText: 'industry domain.',
         options: [
-          { label: 'Fashion & Couture', img: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=800' },
-          { label: 'Art & Galleries', img: 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&q=80&w=800' },
-          { label: 'Medical Wellness', img: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800' },
-          { label: 'Luxury F&B', img: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=800' }
+          { label: 'Fashion & Couture', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-design-district/fashionenclave/fashionenclave-big-popup.webp' },
+          { label: 'Art & Galleries', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-monte-carlo-international/private-office/popup-office-7.webp' },
+          { label: 'Medical Wellness', img: 'https://cdn.dellatownships.com/images/wellness-nagpur/luxury-meets/healthy-ageing-suite-first-floor-della-townships-wellness-nagpur.webp' },
+          { label: 'Luxury F&B', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-design-district/luxuryretail/luxuryretail-big-popup.webp' }
         ],
       },
       'Commercial & GCC': {
         title: 'What scale of infrastructure',
         italicText: 'are you seeking?',
         options: [
-          { label: 'Private Office', img: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800' },
-          { label: 'R&D Center', img: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800' },
-          { label: 'Co-creation Studio', img: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800' },
-          { label: 'Entire Floorplate', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800' }
+          { label: 'Private Office', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-design-district/grid-factfiles/popup/della-townships-ahmedabad-design-district-private-offices-popup.webp' },
+          { label: 'R&D Center', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-monte-carlo-international/gcc-hubs/3.webp' },
+          { label: 'Co-creation Studio', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-monte-carlo-international/private-office/popup-office-7.webp' },
+          { label: 'Entire Floorplate', img: 'https://cdn.dellatownships.com/images/della-international-ahmedabad/della-design-district/artenclave/artenclave-popup-9.webp' }
         ],
       },
     }[formData.intent];
